@@ -1,8 +1,8 @@
 package dk.ikas.lcd.examproject;
 
 import android.content.Context;
-import android.media.Image;
-import android.net.Uri;
+import android.icu.text.DateFormat;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,10 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,50 +88,109 @@ public class CreateReport extends Fragment {
 
     private Report createReport() {
 
-        EditText etDate = (EditText) getView().findViewById(R.id.date);
-        EditText etLength = (EditText) getView().findViewById(R.id.length);
-        EditText etNotes = (EditText) getView().findViewById(R.id.notes);
-        EditText etNumber = (EditText) getView().findViewById(R.id.number);
-        EditText etPlace = (EditText) getView().findViewById(R.id.place);
-        EditText etPicture = (EditText) getView().findViewById(R.id.picture);
-        EditText etRemarks = (EditText) getView().findViewById(R.id.remarks);
-        EditText etSpecies = (EditText) getView().findViewById(R.id.species);
-        EditText etTemperature = (EditText) getView().findViewById(R.id.temperature);
-        EditText etTime = (EditText) getView().findViewById(R.id.time);
-        EditText etVisibility = (EditText) getView().findViewById(R.id.visibility);
-        EditText etWeather = (EditText) getView().findViewById(R.id.weather);
-        EditText etWeight = (EditText) getView().findViewById(R.id.weight);
-
         Report result = new Report();
-        if (etDate.getText().toString() != "") {
-            //result.setDate(LocalDate.parse(etDate.getText().toString()));
+
+//        DatePicker dtDate = (DatePicker) getView().findViewById(R.id.date);
+//        result.setDate(getDateFromDatePicker(dtDate).toString());
+
+        EditText etDate = (EditText) getView().findViewById(R.id.date);
+        if (isEmpty(etDate)) {
+            etDate.setHint("@string/mandatory_field");
+            etDate.setFocusable(true);
+        } else {
+            result.setDate(etDate.getText().toString());
         }
-        if (etLength.getText().toString() != "") {
+
+        EditText etLength = (EditText) getView().findViewById(R.id.length);
+        if (!isEmpty(etLength)) {
             result.setLength(Float.parseFloat(etLength.getText().toString()));
         }
-        result.setNotes(etNotes.getText().toString());
-        if (etNumber.getText().toString() != "") {
+
+        EditText etNotes = (EditText) getView().findViewById(R.id.notes);
+        if (!isEmpty(etNotes)) {
+            result.setNotes(etNotes.getText().toString());
+        }
+
+        EditText etNumber = (EditText) getView().findViewById(R.id.number);
+        if (!isEmpty(etNumber)) {
             result.setNumber(Integer.parseInt(etNumber.getText().toString()));
         }
-        result.setPlace(etPlace.getText().toString());
-        if (etPicture.getText().toString() != "") {
+
+        EditText etPlace = (EditText) getView().findViewById(R.id.place);
+        if (!isEmpty(etPlace)) {
+            result.setPlace(etPlace.getText().toString());
+        }
+
+        EditText etPicture = (EditText) getView().findViewById(R.id.picture);
+        if (!isEmpty(etPicture)) {
             //result.setPicture(Image.Plane(etPicture.getText().toString()));
         }
-        result.setRemarks(etRemarks.getText().toString());
-        result.setSpecies(etSpecies.getText().toString());
-        if (etTemperature.getText().toString() != "") {
+
+        EditText etRemarks = (EditText) getView().findViewById(R.id.remarks);
+        if (!isEmpty(etRemarks)) {
+            result.setRemarks(etRemarks.getText().toString());
+        }
+
+        EditText etSpecies = (EditText) getView().findViewById(R.id.species);
+        if (!isEmpty(etSpecies)) {
+            result.setSpecies(etSpecies.getText().toString());
+        }
+
+        EditText etTemperature = (EditText) getView().findViewById(R.id.temperature);
+        if (!isEmpty(etTemperature)) {
             result.setTemperature(Float.parseFloat(etTemperature.getText().toString()));
         }
-        if (etTime.getText().toString() != "") {
-            //result.setTime(LocalDateTime.parse(etTime.getText()));
+
+        EditText etTime = (EditText) getView().findViewById(R.id.time);
+        if (!isEmpty(etTime)) {
+            result.setTime(etTime.getText().toString());
         }
-        if (etVisibility.getText().toString() != "") {
+
+        EditText etVisibility = (EditText) getView().findViewById(R.id.visibility);
+        if (!isEmpty(etVisibility)) {
             result.setVisibility(Float.parseFloat(etVisibility.getText().toString()));
         }
-        result.setWeather(etWeather.getText().toString());
-        if (etWeight.getText().toString() != "") {
+
+        EditText etWeather = (EditText) getView().findViewById(R.id.weather);
+        if (!isEmpty(etWeather)) {
+            result.setWeather(etWeather.getText().toString());
+        }
+
+        EditText etWeight = (EditText) getView().findViewById(R.id.weight);
+        if (!isEmpty(etWeight)) {
             result.setWeight(Float.parseFloat(etWeight.getText().toString()));
         }
         return result;
+    }
+
+    private Boolean isEmpty(EditText text) {
+        if (text.getText().toString().trim().length() > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    private Date getDateTime(EditText text) {
+        if (!isEmpty(text)) {
+            try {
+                String dateTime = text.getText().toString().trim();
+                DateFormat format = new SimpleDateFormat("dd:MM:yyyy hh:mm:ss");
+                return format.parse(dateTime);
+            } catch (Exception ex) {
+                Log.e("CreateReport", "getDateTime: ", ex);
+            }
+        }
+        return null;
+    }
+
+    private Date getDateFromDatePicker(DatePicker datePicker){
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth();
+        int year =  datePicker.getYear();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+
+        return calendar.getTime();
     }
 }

@@ -41,18 +41,18 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
                 fragment = new CreateReport();
                 Toast.makeText(this, "Create report.", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.action_EditReport:
-                fragment = new EditReport();
-                Toast.makeText(this, "Edit report.", Toast.LENGTH_LONG).show();
-                break;
+//            case R.id.action_EditReport:
+//                fragment = new EditReport();
+//                Toast.makeText(this, "Edit report.", Toast.LENGTH_LONG).show();
+//                break;
             case R.id.action_ListReports:
                 fragment = new ListReports();
                 Toast.makeText(this, "Home.", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.action_Setting:
-                fragment = new Setting();
-                Toast.makeText(this, "Settings.", Toast.LENGTH_LONG).show();
-                break;
+//            case R.id.action_Setting:
+//                fragment = new Setting();
+//                Toast.makeText(this, "Settings.", Toast.LENGTH_LONG).show();
+//                break;
             case R.id.action_ShowReport:
                 fragment = new ShowReport();
                 Toast.makeText(this, "Show report.", Toast.LENGTH_LONG).show();
@@ -73,8 +73,13 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
     @Override
     public void SaveClicked(Report report) {
 
-        Log.d("Report", report.getNotes());
-        Log.d("Report", report.getDate().toString());
-        Log.d("Report", report.getTime().toString());
+        if (report.getNotes() != null) {
+            Log.d("Report", report.getNotes());
+        }
+        if (report.getDate() != null) {
+            Log.d("Report", report.getDate());
+        }
+        if (report.getTime() != null)
+            Log.d("Report", report.getTime());
     }
 }

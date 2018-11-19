@@ -1,14 +1,16 @@
 package dk.ikas.lcd.examproject;
 
 import android.media.Image;
+import android.text.format.Time;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class Report {
 
-    private LocalDate date;
-    private LocalDateTime time;
+    private String date;
+    private String time;
     private String place;
     private String weather;
     private Float visibility;
@@ -25,7 +27,7 @@ public class Report {
 
     }
 
-    public Report(LocalDate date, LocalDateTime time, String place, String weather, Float visibility, Float temperature, String species, Float weight, Float length, Integer number, String notes, String remarks, Image picture) {
+    public Report(String date, String time, String place, String weather, Float visibility, Float temperature, String species, Float weight, Float length, Integer number, String notes, String remarks, Image picture) {
         this.date = date;
         this.time = time;
         this.place = place;
@@ -41,14 +43,14 @@ public class Report {
         this.picture = picture;
     }
 
-    public LocalDateTime getTime() {
+    public String getTime() {
         if(this.time == null){
             return null;
         }
         return time;
     }
 
-    public void setTime(LocalDateTime time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
@@ -158,14 +160,14 @@ public class Report {
         this.picture = picture;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         if(this.date == null){
             return null;
         }
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }
