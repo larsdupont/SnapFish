@@ -13,8 +13,16 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,7 +34,9 @@ import java.util.Date;
  */
 public class CreateReport extends Fragment {
 
+    private final static String TAG = "CreateReport";
     private OnFragmentInteractionListener mListener;
+    private FirebaseAuth mAuth;
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -48,6 +58,8 @@ public class CreateReport extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //mAuth = (FirebaseAuth) savedInstanceState.getBundle("auth");
     }
 
     @Override
@@ -60,10 +72,11 @@ public class CreateReport extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Report report = createReport();
-                if (report != null && mListener != null) {
-                    mListener.SaveClicked(report);
-                }
+                createReport();
+//                Report report = createReport();
+//                if (report != null && mListener != null) {
+//                    mListener.SaveClicked(report);
+//                }
             }
         });
         return view;
@@ -86,7 +99,7 @@ public class CreateReport extends Fragment {
         mListener = null;
     }
 
-    private Report createReport() {
+    private void createReport() {
 
         Report result = new Report();
 
@@ -160,7 +173,23 @@ public class CreateReport extends Fragment {
         if (!isEmpty(etWeight)) {
             result.setWeight(Float.parseFloat(etWeight.getText().toString()));
         }
-        return result;
+        //return result;
+
+        FirebaseAuth instance = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            try {
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                JSONObject json = new JSONObject();
+                json.put("id", UUID.randomUUID());
+                json.put("time", System.currentTimeMillis());
+                json.put("report", result);
+                ref.setValue(json.toString());
+                ref.push();
+            } catch (Exception e) {
+                Log.e(TAG, "createReport: ", e);
+            }
+        }
     }
 
     private Boolean isEmpty(EditText text) {
@@ -183,10 +212,10 @@ public class CreateReport extends Fragment {
         return null;
     }
 
-    private Date getDateFromDatePicker(DatePicker datePicker){
+    private Date getDateFromDatePicker(DatePicker datePicker) {
         int day = datePicker.getDayOfMonth();
         int month = datePicker.getMonth();
-        int year =  datePicker.getYear();
+        int year = datePicker.getYear();
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
