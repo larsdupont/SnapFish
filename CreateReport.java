@@ -58,8 +58,6 @@ public class CreateReport extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //mAuth = (FirebaseAuth) savedInstanceState.getBundle("auth");
     }
 
     @Override
@@ -72,11 +70,10 @@ public class CreateReport extends Fragment {
             @Override
             public void onClick(View v) {
 
-                createReport();
-//                Report report = createReport();
-//                if (report != null && mListener != null) {
-//                    mListener.SaveClicked(report);
-//                }
+                Report report = createReport();
+                if (report != null && mListener != null) {
+                    mListener.SaveClicked(report);
+                }
             }
         });
         return view;
@@ -99,97 +96,96 @@ public class CreateReport extends Fragment {
         mListener = null;
     }
 
-    private void createReport() {
+    private Report createReport() {
 
-        Report result = new Report();
-
-//        DatePicker dtDate = (DatePicker) getView().findViewById(R.id.date);
-//        result.setDate(getDateFromDatePicker(dtDate).toString());
+        Report report = new Report();
 
         EditText etDate = (EditText) getView().findViewById(R.id.date);
         if (isEmpty(etDate)) {
             etDate.setHint("@string/mandatory_field");
             etDate.setFocusable(true);
         } else {
-            result.setDate(etDate.getText().toString());
+            report.setDate(etDate.getText().toString());
         }
 
         EditText etLength = (EditText) getView().findViewById(R.id.length);
         if (!isEmpty(etLength)) {
-            result.setLength(Float.parseFloat(etLength.getText().toString()));
+            report.setLength(Float.parseFloat(etLength.getText().toString()));
         }
 
         EditText etNotes = (EditText) getView().findViewById(R.id.notes);
         if (!isEmpty(etNotes)) {
-            result.setNotes(etNotes.getText().toString());
+            report.setNotes(etNotes.getText().toString());
         }
 
         EditText etNumber = (EditText) getView().findViewById(R.id.number);
         if (!isEmpty(etNumber)) {
-            result.setNumber(Integer.parseInt(etNumber.getText().toString()));
+            report.setNumber(Integer.parseInt(etNumber.getText().toString()));
         }
 
         EditText etPlace = (EditText) getView().findViewById(R.id.place);
         if (!isEmpty(etPlace)) {
-            result.setPlace(etPlace.getText().toString());
+            report.setPlace(etPlace.getText().toString());
         }
 
         EditText etPicture = (EditText) getView().findViewById(R.id.picture);
         if (!isEmpty(etPicture)) {
-            //result.setPicture(Image.Plane(etPicture.getText().toString()));
+            //report.setPicture(Image.Plane(etPicture.getText().toString()));
         }
 
         EditText etRemarks = (EditText) getView().findViewById(R.id.remarks);
         if (!isEmpty(etRemarks)) {
-            result.setRemarks(etRemarks.getText().toString());
+            report.setRemarks(etRemarks.getText().toString());
         }
 
         EditText etSpecies = (EditText) getView().findViewById(R.id.species);
         if (!isEmpty(etSpecies)) {
-            result.setSpecies(etSpecies.getText().toString());
+            report.setSpecies(etSpecies.getText().toString());
         }
 
         EditText etTemperature = (EditText) getView().findViewById(R.id.temperature);
         if (!isEmpty(etTemperature)) {
-            result.setTemperature(Float.parseFloat(etTemperature.getText().toString()));
+            report.setTemperature(Float.parseFloat(etTemperature.getText().toString()));
         }
 
         EditText etTime = (EditText) getView().findViewById(R.id.time);
         if (!isEmpty(etTime)) {
-            result.setTime(etTime.getText().toString());
+            report.setTime(etTime.getText().toString());
         }
 
         EditText etVisibility = (EditText) getView().findViewById(R.id.visibility);
         if (!isEmpty(etVisibility)) {
-            result.setVisibility(Float.parseFloat(etVisibility.getText().toString()));
+            report.setVisibility(Float.parseFloat(etVisibility.getText().toString()));
         }
 
         EditText etWeather = (EditText) getView().findViewById(R.id.weather);
         if (!isEmpty(etWeather)) {
-            result.setWeather(etWeather.getText().toString());
+            report.setWeather(etWeather.getText().toString());
         }
 
         EditText etWeight = (EditText) getView().findViewById(R.id.weight);
         if (!isEmpty(etWeight)) {
-            result.setWeight(Float.parseFloat(etWeight.getText().toString()));
+            report.setWeight(Float.parseFloat(etWeight.getText().toString()));
         }
-        //return result;
+        return report;
 
-        FirebaseAuth instance = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            try {
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                JSONObject json = new JSONObject();
-                json.put("id", UUID.randomUUID());
-                json.put("time", System.currentTimeMillis());
-                json.put("report", result);
-                ref.setValue(json.toString());
-                ref.push();
-            } catch (Exception e) {
-                Log.e(TAG, "createReport: ", e);
-            }
-        }
+//       FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+//        if (currentUser != null) {
+//            try {
+//
+//                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//                DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+//                String uuid = UUID.randomUUID().toString();
+//                DatabaseReference ref = root.child("pike85").child(uuid);
+//
+//                report.setUid(uid);
+//                report.setTemperature(System.currentTimeMillis());
+//                ref.setValue(report);
+//
+//            } catch (Exception e) {
+//                Log.e(TAG, "createReport: ", e);
+//            }
+//        }
     }
 
     private Boolean isEmpty(EditText text) {

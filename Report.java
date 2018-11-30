@@ -1,13 +1,8 @@
 package dk.ikas.lcd.examproject;
 
 import android.media.Image;
-import android.text.format.Time;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-
-public class Report {
+public class Report extends ReportExtension {
 
     private String date;
     private String time;
@@ -88,7 +83,7 @@ public class Report {
         return temperature;
     }
 
-    public void setTemperature(Float temperature) {
+    public void setTemperature(float temperature) {
         this.temperature = temperature;
     }
 

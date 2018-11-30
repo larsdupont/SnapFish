@@ -1,14 +1,20 @@
 package dk.ikas.lcd.examproject;
 
 import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.UUID;
+
 public class ReportController {
 
+    private final static String TAG = "ReportController";
     private Report report;
 
     public ReportController(Report report) {
@@ -17,18 +23,22 @@ public class ReportController {
 
     public void saveReport() {
 
-        if(this.report == null)
-        {
-            return;
-        }
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            try {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-//        myRef.setValue("Hello, World!");
-        try {
-            myRef.setValue(this.report.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+                String uuid = UUID.randomUUID().toString();
+                DatabaseReference ref = root.child("pike85").child(uuid);
+
+                this.report.setUid(uid);
+                this.report.setTemperature(System.currentTimeMillis());
+                ref.setValue(this.report);
+
+            } catch (Exception e) {
+                Log.e(TAG, "createReport: ", e);
+            }
         }
 
     }

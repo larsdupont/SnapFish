@@ -19,7 +19,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class AuthenticationActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //private static final String Db = "https://snapfish-981d9.firebaseio.com/";
     private static final String TAG = "Authentication";
 
     private TextView mStatusTextView;
@@ -30,7 +29,6 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     private String email;
     private String password;
 
-    //private DatabaseReference mDb;
     private FirebaseAuth mAuth;
 
     @Override
@@ -50,16 +48,7 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
         findViewById(R.id.signOutButton).setOnClickListener(this);
         findViewById(R.id.verifyEmailButton).setOnClickListener(this);
 
-        //snapfish-981d9.firebaseapp.com
-        //get reference
-        //this.mDb = FirebaseDatabase.getInstance().getReference(Db); //.child(user.getUid());
-        //IMPORTANT: .getReference(user.getUid()) will not work although user.getUid() is unique. You need a full path!
-
-        // [START initialize_auth]
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        //FirebaseApp firebaseApp = mAuth.getApp();
-        // [END initialize_auth]
     }
 
     @Override
@@ -92,13 +81,6 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     public void onStop() {
         super.onStop();
     }
-
-//    @Override
-//    public void onSaveInstanceState(Bundle bundle)
-//    {
-//        super.onSaveInstanceState(bundle);
-//        bundle.putString("TEST", "lcd test");
-//    }
 
     private void signUp() {
 
