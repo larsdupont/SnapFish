@@ -1,7 +1,10 @@
 package dk.ikas.lcd.examproject;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
 
     private final String TAG = "MainActivity";
     private final Integer AuthenticationActivity = 1;
+    private final Integer PhotoActivity = 2;
     //private final Integer CreateReport = 2;
 
     @Override
@@ -89,15 +93,57 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == this.AuthenticationActivity) {
+
             String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d(TAG, "onActivityResult: " + id);
+
+        } else if (requestCode == this.PhotoActivity) {
+
+            switch (resultCode) {
+                case -1:
+                    if (resultCode == RESULT_OK) {
+
+                        Uri selectedImage = data.getData();
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                        Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        String picturePath = cursor.getString(columnIndex);
+                        cursor.close();
+
+                        Log.d(TAG, "onActivityResult: " + selectedImage);
+                        // TODO: 01/12/2018  
+                        //imageview.setImageURI(selectedImage);
+                    }
+
+                    break;
+                case 1:
+                    if (resultCode == RESULT_OK) {
+                        Uri selectedImage = data.getData();
+                        Log.d(TAG, "onActivityResult: " + selectedImage);
+                        // TODO: 01/12/2018
+                        //imageview.setImageURI(selectedImage);
+                    }
+                    break;
+            }
         }
 
     }
 
     @Override
     public void SaveClicked(Report report) {
+
         new ReportController(report).saveReport();
+
     }
 
+    @Override
+    public void ImageClicked() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, this.PhotoActivity);
+
+    }
 }

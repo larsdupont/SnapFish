@@ -1,6 +1,7 @@
 package dk.ikas.lcd.examproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -35,6 +37,7 @@ public class CreateReport extends Fragment {
         // TODO: Update argument type and name
         //void onFragmentInteraction(Uri uri);
         void SaveClicked(Report report);
+        void ImageClicked();
     }
 
     public CreateReport() {
@@ -55,10 +58,10 @@ public class CreateReport extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_create_report, container, false);
-        Button btn = view.findViewById(R.id.btnSaveReport);
-        btn.setOnClickListener(new View.OnClickListener() {
+        Button btnSave = view.findViewById(R.id.btnSaveReport);
+        btnSave.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -67,6 +70,17 @@ public class CreateReport extends Fragment {
                 if (report != null && mListener != null) {
                     mListener.SaveClicked(report);
                 }
+            }
+        });
+
+        Button btnPicture = view.findViewById(R.id.picture);
+        btnPicture.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                mListener.ImageClicked();
+
             }
         });
         return view;
