@@ -15,12 +15,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity implements CreateReport.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
     private final Integer AuthenticationActivity = 1;
-    private final Integer PhotoActivity = 2;
-    //private final Integer CreateReport = 2;
+    private final Integer ReportActivity = 2;
 
     @Override
     public void onStart() {
@@ -48,17 +47,23 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
+        Intent intent;
+
         Fragment fragment = null;
         switch (item.getItemId()) {
             case R.id.action_CreateReport:
-                fragment = new CreateReport();
+
+                intent = new Intent(this, ReportActivity.class);
+                startActivityForResult(intent, this.ReportActivity);
                 Toast.makeText(this, "Create report.", Toast.LENGTH_LONG).show();
-                break;
+                return true;
+
 //            case R.id.action_EditReport:
 //                fragment = new EditReport();
 //                Toast.makeText(this, "Edit report.", Toast.LENGTH_LONG).show();
 //                break;
             case R.id.action_ListReports:
+
                 fragment = new ListReports();
                 Toast.makeText(this, "Home.", Toast.LENGTH_LONG).show();
                 break;
@@ -66,16 +71,20 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
 //                fragment = new Setting();
 //                Toast.makeText(this, "Settings.", Toast.LENGTH_LONG).show();
 //                break;
+
             case R.id.action_ShowReport:
+
                 fragment = new ShowReport();
                 Toast.makeText(this, "Show report.", Toast.LENGTH_LONG).show();
                 break;
+
             case R.id.action_signin:
-                //fragment = new SignInFragment();
-                //Toast.makeText(this, "Sign In.", Toast.LENGTH_LONG);
-                Intent intent = new Intent(this, AuthenticationActivity.class);
+
+                intent = new Intent(this, AuthenticationActivity.class);
                 startActivityForResult(intent, this.AuthenticationActivity);
+                Toast.makeText(this, "Sign In.", Toast.LENGTH_LONG);
                 return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -97,53 +106,54 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
             String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Log.d(TAG, "onActivityResult: " + id);
 
-        } else if (requestCode == this.PhotoActivity) {
-
-            switch (resultCode) {
-                case -1:
-                    if (resultCode == RESULT_OK) {
-
-                        Uri selectedImage = data.getData();
-                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                        Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        String picturePath = cursor.getString(columnIndex);
-                        cursor.close();
-
-                        Log.d(TAG, "onActivityResult: " + selectedImage);
-                        // TODO: 01/12/2018  
-                        //imageview.setImageURI(selectedImage);
-                    }
-
-                    break;
-                case 1:
-                    if (resultCode == RESULT_OK) {
-                        Uri selectedImage = data.getData();
-                        Log.d(TAG, "onActivityResult: " + selectedImage);
-                        // TODO: 01/12/2018
-                        //imageview.setImageURI(selectedImage);
-                    }
-                    break;
-            }
         }
-
     }
+//        else if (requestCode == this.PhotoActivity) {
+//
+//            switch (resultCode) {
+//                case -1:
+//                    if (resultCode == RESULT_OK) {
+//
+//                        Uri selectedImage = data.getData();
+//                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+//
+//                        Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+//                        cursor.moveToFirst();
+//
+//                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//                        String picturePath = cursor.getString(columnIndex);
+//                        cursor.close();
+//
+//                        Log.d(TAG, "onActivityResult: " + selectedImage);
+//                        // TODO: 01/12/2018
+//                        //imageview.setImageURI(selectedImage);
+//                    }
+//
+//                    break;
+//                case 1:
+//                    if (resultCode == RESULT_OK) {
+//                        Uri selectedImage = data.getData();
+//                        Log.d(TAG, "onActivityResult: " + selectedImage);
+//                        // TODO: 01/12/2018
+//                        //imageview.setImageURI(selectedImage);
+//                    }
+//                    break;
+//            }
+//    }
 
-    @Override
-    public void SaveClicked(Report report) {
 
-        new ReportController(report).saveReport();
-
-    }
-
-    @Override
-    public void ImageClicked() {
-
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, this.PhotoActivity);
-
-    }
+//    @Override
+//    public void SaveClicked(Report report) {
+//
+//        new ReportController(report).saveReport();
+//
+//    }
+//
+//    @Override
+//    public void ImageClicked() {
+//
+//        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        startActivityForResult(intent, this.PhotoActivity);
+//
+//    }
 }

@@ -1,6 +1,6 @@
 package dk.ikas.lcd.examproject;
 
-import android.media.Image;
+import android.net.Uri;
 
 public class Report extends ReportExtension {
 
@@ -8,21 +8,21 @@ public class Report extends ReportExtension {
     private String time;
     private String place;
     private String weather;
-    private Float visibility;
-    private Float temperature;
+    private Double visibility;
+    private Double temperature;
     private String species;
-    private Float weight;
-    private Float length;
+    private Double weight;
+    private Double length;
     private Integer number;
     private String notes;
     private String remarks;
-    private Image picture;
+    private Uri uri;
 
     public Report(){
 
     }
 
-    public Report(String date, String time, String place, String weather, Float visibility, Float temperature, String species, Float weight, Float length, Integer number, String notes, String remarks, Image picture) {
+    public Report(String date, String time, String place, String weather, Double visibility, Double temperature, String species, Double weight, Double length, Integer number, String notes, String remarks, Uri picture) {
         this.date = date;
         this.time = time;
         this.place = place;
@@ -35,7 +35,7 @@ public class Report extends ReportExtension {
         this.number = number;
         this.notes = notes;
         this.remarks = remarks;
-        this.picture = picture;
+        this.uri = picture;
     }
 
     public String getTime() {
@@ -65,25 +65,25 @@ public class Report extends ReportExtension {
         this.weather = weather;
     }
 
-    public Float getVisibility() {
+    public Double getVisibility() {
         if(this.visibility == null){
             return null;
         }
         return visibility;
     }
 
-    public void setVisibility(Float visibility) {
+    public void setVisibility(Double visibility) {
         this.visibility = visibility;
     }
 
-    public Float getTemperature() {
+    public Double getTemperature() {
         if(this.temperature == null){
             return null;
         }
         return temperature;
     }
 
-    public void setTemperature(float temperature) {
+    public void setTemperature(Double temperature) {
         this.temperature = temperature;
     }
 
@@ -95,25 +95,25 @@ public class Report extends ReportExtension {
         this.species = species;
     }
 
-    public Float getWeight() {
+    public Double getWeight() {
         if(this.weight == null){
             return null;
         }
         return weight;
     }
 
-    public void setWeight(Float weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
     }
 
-    public Float getLength() {
+    public Double getLength() {
         if(this.length == null){
             return null;
         }
         return length;
     }
 
-    public void setLength(Float length) {
+    public void setLength(Double length) {
         this.length = length;
     }
 
@@ -144,15 +144,15 @@ public class Report extends ReportExtension {
         this.remarks = remarks;
     }
 
-    public Image getPicture() {
-        if(this.picture == null){
+    public Uri getUri() {
+        if(this.uri == null){
             return null;
         }
-        return picture;
+        return uri;
     }
 
-    public void setPicture(Image picture) {
-        this.picture = picture;
+    public void setUri(Uri picture) {
+        this.uri = picture;
     }
 
     public String getDate() {

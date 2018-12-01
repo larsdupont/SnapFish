@@ -1,7 +1,6 @@
 package dk.ikas.lcd.examproject;
 
 import android.content.Context;
-import android.content.Intent;
 import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
@@ -13,9 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -60,7 +56,7 @@ public class CreateReport extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_create_report, container, false);
-        Button btnSave = view.findViewById(R.id.btnSaveReport);
+        Button btnSave = view.findViewById(R.id.saveReport);
         btnSave.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -73,7 +69,7 @@ public class CreateReport extends Fragment {
             }
         });
 
-        Button btnPicture = view.findViewById(R.id.picture);
+        Button btnPicture = view.findViewById(R.id.selectPicture);
         btnPicture.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -117,7 +113,7 @@ public class CreateReport extends Fragment {
 
         EditText etLength = getView().findViewById(R.id.length);
         if (!isEmpty(etLength)) {
-            report.setLength(Float.parseFloat(etLength.getText().toString()));
+            report.setLength(Double.parseDouble(etLength.getText().toString()));
         }
 
         EditText etNotes = getView().findViewById(R.id.notes);
@@ -135,7 +131,7 @@ public class CreateReport extends Fragment {
             report.setPlace(etPlace.getText().toString());
         }
 
-        EditText etPicture = getView().findViewById(R.id.picture);
+        EditText etPicture = getView().findViewById(R.id.selectPicture);
         if (!isEmpty(etPicture)) {
             //report.setPicture(Image.Plane(etPicture.getText().toString()));
         }
@@ -152,7 +148,7 @@ public class CreateReport extends Fragment {
 
         EditText etTemperature = getView().findViewById(R.id.temperature);
         if (!isEmpty(etTemperature)) {
-            report.setTemperature(Float.parseFloat(etTemperature.getText().toString()));
+            report.setTemperature(Double.parseDouble(etTemperature.getText().toString()));
         }
 
         EditText etTime = getView().findViewById(R.id.time);
@@ -162,7 +158,7 @@ public class CreateReport extends Fragment {
 
         EditText etVisibility = getView().findViewById(R.id.visibility);
         if (!isEmpty(etVisibility)) {
-            report.setVisibility(Float.parseFloat(etVisibility.getText().toString()));
+            report.setVisibility(Double.parseDouble(etVisibility.getText().toString()));
         }
 
         EditText etWeather = getView().findViewById(R.id.weather);
@@ -172,7 +168,7 @@ public class CreateReport extends Fragment {
 
         EditText etWeight = getView().findViewById(R.id.weight);
         if (!isEmpty(etWeight)) {
-            report.setWeight(Float.parseFloat(etWeight.getText().toString()));
+            report.setWeight(Double.parseDouble(etWeight.getText().toString()));
         }
         return report;
     }
