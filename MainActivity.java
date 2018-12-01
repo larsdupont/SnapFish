@@ -97,16 +97,6 @@ public class MainActivity extends AppCompatActivity implements CreateReport.OnFr
 
     @Override
     public void SaveClicked(Report report) {
-
-//        if (report.getNotes() != null) {
-//            Log.d("Report", report.getNotes());
-//        }
-//        if (report.getDate() != null) {
-//            Log.d("Report", report.getDate());
-//        }
-//        if (report.getTime() != null) {
-//            Log.d("Report", report.getTime());
-//        }
         new ReportController(report).saveReport();
     }
 

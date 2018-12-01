@@ -14,15 +14,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +30,6 @@ public class CreateReport extends Fragment {
 
     private final static String TAG = "CreateReport";
     private OnFragmentInteractionListener mListener;
-    private FirebaseAuth mAuth;
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -64,7 +57,7 @@ public class CreateReport extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_report, container, false);
-        Button btn = (Button) view.findViewById(R.id.btnSaveReport);
+        Button btn = view.findViewById(R.id.btnSaveReport);
         btn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -100,7 +93,7 @@ public class CreateReport extends Fragment {
 
         Report report = new Report();
 
-        EditText etDate = (EditText) getView().findViewById(R.id.date);
+        EditText etDate = getView().findViewById(R.id.date);
         if (isEmpty(etDate)) {
             etDate.setHint("@string/mandatory_field");
             etDate.setFocusable(true);
@@ -108,84 +101,66 @@ public class CreateReport extends Fragment {
             report.setDate(etDate.getText().toString());
         }
 
-        EditText etLength = (EditText) getView().findViewById(R.id.length);
+        EditText etLength = getView().findViewById(R.id.length);
         if (!isEmpty(etLength)) {
             report.setLength(Float.parseFloat(etLength.getText().toString()));
         }
 
-        EditText etNotes = (EditText) getView().findViewById(R.id.notes);
+        EditText etNotes = getView().findViewById(R.id.notes);
         if (!isEmpty(etNotes)) {
             report.setNotes(etNotes.getText().toString());
         }
 
-        EditText etNumber = (EditText) getView().findViewById(R.id.number);
+        EditText etNumber = getView().findViewById(R.id.number);
         if (!isEmpty(etNumber)) {
             report.setNumber(Integer.parseInt(etNumber.getText().toString()));
         }
 
-        EditText etPlace = (EditText) getView().findViewById(R.id.place);
+        EditText etPlace = getView().findViewById(R.id.place);
         if (!isEmpty(etPlace)) {
             report.setPlace(etPlace.getText().toString());
         }
 
-        EditText etPicture = (EditText) getView().findViewById(R.id.picture);
+        EditText etPicture = getView().findViewById(R.id.picture);
         if (!isEmpty(etPicture)) {
             //report.setPicture(Image.Plane(etPicture.getText().toString()));
         }
 
-        EditText etRemarks = (EditText) getView().findViewById(R.id.remarks);
+        EditText etRemarks = getView().findViewById(R.id.remarks);
         if (!isEmpty(etRemarks)) {
             report.setRemarks(etRemarks.getText().toString());
         }
 
-        EditText etSpecies = (EditText) getView().findViewById(R.id.species);
+        EditText etSpecies = getView().findViewById(R.id.species);
         if (!isEmpty(etSpecies)) {
             report.setSpecies(etSpecies.getText().toString());
         }
 
-        EditText etTemperature = (EditText) getView().findViewById(R.id.temperature);
+        EditText etTemperature = getView().findViewById(R.id.temperature);
         if (!isEmpty(etTemperature)) {
             report.setTemperature(Float.parseFloat(etTemperature.getText().toString()));
         }
 
-        EditText etTime = (EditText) getView().findViewById(R.id.time);
+        EditText etTime = getView().findViewById(R.id.time);
         if (!isEmpty(etTime)) {
             report.setTime(etTime.getText().toString());
         }
 
-        EditText etVisibility = (EditText) getView().findViewById(R.id.visibility);
+        EditText etVisibility = getView().findViewById(R.id.visibility);
         if (!isEmpty(etVisibility)) {
             report.setVisibility(Float.parseFloat(etVisibility.getText().toString()));
         }
 
-        EditText etWeather = (EditText) getView().findViewById(R.id.weather);
+        EditText etWeather = getView().findViewById(R.id.weather);
         if (!isEmpty(etWeather)) {
             report.setWeather(etWeather.getText().toString());
         }
 
-        EditText etWeight = (EditText) getView().findViewById(R.id.weight);
+        EditText etWeight = getView().findViewById(R.id.weight);
         if (!isEmpty(etWeight)) {
             report.setWeight(Float.parseFloat(etWeight.getText().toString()));
         }
         return report;
-
-//       FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-//        if (currentUser != null) {
-//            try {
-//
-//                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//                DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-//                String uuid = UUID.randomUUID().toString();
-//                DatabaseReference ref = root.child("pike85").child(uuid);
-//
-//                report.setUid(uid);
-//                report.setTemperature(System.currentTimeMillis());
-//                ref.setValue(report);
-//
-//            } catch (Exception e) {
-//                Log.e(TAG, "createReport: ", e);
-//            }
-//        }
     }
 
     private Boolean isEmpty(EditText text) {
