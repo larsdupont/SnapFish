@@ -2,13 +2,10 @@ package dk.ikas.lcd.examproject;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,14 +31,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-//        findViewById(R.id.menu_action_main).setVisibility(View.INVISIBLE);
-//        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-//
-//            findViewById(R.id.menu_action_create).setVisibility(View.INVISIBLE);
-//            findViewById(R.id.menu_action_list).setVisibility(View.INVISIBLE);
-//            findViewById(R.id.menu_action_settings).setVisibility(View.INVISIBLE);
-//
-//        }
+        menu.findItem(R.id.menu_action_main).setVisible(false);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            menu.findItem(R.id.menu_action_create).setVisible(false);
+            menu.findItem(R.id.menu_action_list).setVisible(false);
+            menu.findItem(R.id.menu_action_settings).setVisible(false);
+        }
         return true;
     }
 
@@ -50,37 +46,31 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
         Intent intent;
-
         switch (item.getItemId()) {
-
             case R.id.menu_action_authenticate:
-
                 intent = new Intent(this, AuthenticationActivity.class);
-                startActivityForResult(intent, this.AuthenticationActivity);
-                Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG);
+                startActivity(intent, null);
+                Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
                 return true;
-
             case R.id.menu_action_create:
-
                 intent = new Intent(this, ReportActivity.class);
-                startActivityForResult(intent, this.ReportActivity);
-                Toast.makeText(this, "New Report", Toast.LENGTH_LONG).show();
+                startActivity(intent, null);
+                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
                 return true;
-
             case R.id.menu_action_list:
-
                 intent = new Intent(this, ListActivity.class);
-                startActivityForResult(intent, this.ListActivity);
+                startActivity(intent, null);
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
-
+//            case R.id.menu_action_main:
+//                intent = new Intent(this, MainActivity.class);
+//                startActivity(intent, null);
+//                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
+//                return true;
             case R.id.menu_action_settings:
-
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
-
             default:
                 return super.onOptionsItemSelected(item);
         }

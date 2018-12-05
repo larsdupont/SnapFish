@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,9 +44,45 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.findItem(R.id.menu_action_create).setVisible(false);
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_action_authenticate:
+                intent = new Intent(this, AuthenticationActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
+                return true;
+//            case R.id.menu_action_create:
+//                intent = new Intent(this, ReportActivity.class);
+//                startActivity(intent, null);
+//                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
+//                return true;
+            case R.id.menu_action_list:
+                intent = new Intent(this, ListActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.menu_action_main:
+                intent = new Intent(this, MainActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_action_settings:
+                Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
     @Override
     public void onClick(View v) {
 

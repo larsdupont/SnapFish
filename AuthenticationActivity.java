@@ -56,17 +56,45 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-//        findViewById(R.id.menu_action_authenticate).setVisibility(View.INVISIBLE);
-//        if (this.mAuth.getCurrentUser() == null) {
-//
-//            findViewById(R.id.menu_action_create).setVisibility(View.INVISIBLE);
-//            findViewById(R.id.menu_action_list).setVisibility(View.INVISIBLE);
-//            findViewById(R.id.menu_action_settings).setVisibility(View.INVISIBLE);
-//
-//        }
+        menu.findItem(R.id.menu_action_authenticate).setVisible(false);
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        Intent intent;
+        switch (item.getItemId()) {
+//            case R.id.menu_action_authenticate:
+//                intent = new Intent(this, AuthenticationActivity.class);
+//                startActivity(intent, null);
+//                Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
+//                return true;
+            case R.id.menu_action_create:
+                intent = new Intent(this, ReportActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_action_list:
+                intent = new Intent(this, ListActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.menu_action_main:
+                intent = new Intent(this, MainActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.menu_action_settings:
+                Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
     @Override
     public void onStart() {
         super.onStart();
