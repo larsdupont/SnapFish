@@ -1,6 +1,9 @@
 package dk.ikas.lcd.examproject;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
+
+import java.util.Date;
 
 public class Report extends ReportExtension {
 
@@ -17,6 +20,8 @@ public class Report extends ReportExtension {
     private String notes;
     private String remarks;
     private Uri uri;
+    private String image;
+    private Bitmap thumbnail;
 
     public Report(){
 
@@ -40,7 +45,7 @@ public class Report extends ReportExtension {
 
     public String getTime() {
         if(this.time == null){
-            return null;
+            return "";
         }
         return time;
     }
@@ -50,7 +55,7 @@ public class Report extends ReportExtension {
     }
 
     public String getPlace() {
-        return place;
+        return this.place;
     }
 
     public void setPlace(String place) {
@@ -58,7 +63,7 @@ public class Report extends ReportExtension {
     }
 
     public String getWeather() {
-        return weather;
+        return this.weather;
     }
 
     public void setWeather(String weather) {
@@ -67,9 +72,9 @@ public class Report extends ReportExtension {
 
     public Double getVisibility() {
         if(this.visibility == null){
-            return null;
+            return 0.00;
         }
-        return visibility;
+        return this.visibility;
     }
 
     public void setVisibility(Double visibility) {
@@ -78,9 +83,9 @@ public class Report extends ReportExtension {
 
     public Double getTemperature() {
         if(this.temperature == null){
-            return null;
+            return 0.00;
         }
-        return temperature;
+        return this.temperature;
     }
 
     public void setTemperature(Double temperature) {
@@ -88,7 +93,7 @@ public class Report extends ReportExtension {
     }
 
     public String getSpecies() {
-        return species;
+        return this.species;
     }
 
     public void setSpecies(String species) {
@@ -97,9 +102,9 @@ public class Report extends ReportExtension {
 
     public Double getWeight() {
         if(this.weight == null){
-            return null;
+            return 0.00;
         }
-        return weight;
+        return this.weight;
     }
 
     public void setWeight(Double weight) {
@@ -108,9 +113,9 @@ public class Report extends ReportExtension {
 
     public Double getLength() {
         if(this.length == null){
-            return null;
+            return 0.00;
         }
-        return length;
+        return this.length;
     }
 
     public void setLength(Double length) {
@@ -119,9 +124,9 @@ public class Report extends ReportExtension {
 
     public Integer getNumber() {
         if(this.number == null){
-            return null;
+            return 0;
         }
-        return number;
+        return this.number;
     }
 
     public void setNumber(Integer number) {
@@ -129,7 +134,7 @@ public class Report extends ReportExtension {
     }
 
     public String getNotes() {
-        return notes;
+        return this.notes;
     }
 
     public void setNotes(String notes) {
@@ -137,7 +142,7 @@ public class Report extends ReportExtension {
     }
 
     public String getRemarks() {
-        return remarks;
+        return this.remarks;
     }
 
     public void setRemarks(String remarks) {
@@ -148,7 +153,7 @@ public class Report extends ReportExtension {
         if(this.uri == null){
             return null;
         }
-        return uri;
+        return this.uri;
     }
 
     public void setUri(Uri picture) {
@@ -157,12 +162,28 @@ public class Report extends ReportExtension {
 
     public String getDate() {
         if(this.date == null){
-            return null;
+            return new Date().toString();
         }
-        return date;
+        return this.date;
     }
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(Bitmap thumbnail) {
+        this.thumbnail = thumbnail;
     }
 }

@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -49,6 +51,20 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
         findViewById(R.id.verifyEmailButton).setOnClickListener(this);
 
         mAuth = FirebaseAuth.getInstance();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        findViewById(R.id.menu_action_authenticate).setVisibility(View.INVISIBLE);
+//        if (this.mAuth.getCurrentUser() == null) {
+//
+//            findViewById(R.id.menu_action_create).setVisibility(View.INVISIBLE);
+//            findViewById(R.id.menu_action_list).setVisibility(View.INVISIBLE);
+//            findViewById(R.id.menu_action_settings).setVisibility(View.INVISIBLE);
+//
+//        }
+        return true;
     }
 
     @Override

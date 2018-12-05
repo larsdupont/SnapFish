@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,6 +22,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.util.Objects;
+
 public class ReportActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = "ReportActivity";
@@ -35,6 +38,12 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
         findViewById(R.id.saveReport).setOnClickListener(this);
         findViewById(R.id.selectPicture).setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
@@ -114,6 +123,8 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
             if (this.imageUri != null) {
                 this.report.setUri(this.imageUri);
+                this.report.setImage(this.imageUri.getPath());
+                this.report.setHasImage(true);
             }
 
             EditText etRemarks = findViewById(R.id.remarks);
@@ -159,20 +170,13 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private Boolean isEmpty(EditText text) {
-        if (text.getText().toString().trim().length() > 0) {
-            return false;
-        }
-        return true;
+        return text.getText().toString().trim().length() <= 0;
     }
 
     private void uploadImage() {
 
         Uri uri = this.report.getUri();
         if (uri != null) {
-
-//            final ProgressDialog progressDialog = new ProgressDialog(this);
-//            progressDialog.setTitle("Uploading...");
-//            progressDialog.show();
 
             StorageReference ref = FirebaseStorage.getInstance().getReference("pike85").child(this.report.getUuid());
             ref.putFile(uri)
@@ -207,7 +211,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         if (currentUser != null) {
             try {
 
-                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 DatabaseReference root = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference ref = root.child("pike85").child(this.report.getUuid());
 

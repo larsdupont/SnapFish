@@ -7,6 +7,7 @@ public class ReportExtension {
     private String uid;
     private Long timeStamp;
     private final String uuid = UUID.randomUUID().toString();
+    private Boolean hasImage;
 
     public String getUid() {
         return uid;
@@ -26,5 +27,13 @@ public class ReportExtension {
 
     public String getUuid(){
         return this.uuid;
+    }
+
+    public Boolean getHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(Boolean hasImage) {
+        this.hasImage = hasImage;
     }
 }

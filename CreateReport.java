@@ -3,6 +3,7 @@ package dk.ikas.lcd.examproject;
 import android.content.Context;
 import android.icu.text.DateFormat;
 import android.icu.text.SimpleDateFormat;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -131,10 +133,10 @@ public class CreateReport extends Fragment {
             report.setPlace(etPlace.getText().toString());
         }
 
-        EditText etPicture = getView().findViewById(R.id.selectPicture);
-        if (!isEmpty(etPicture)) {
-            //report.setPicture(Image.Plane(etPicture.getText().toString()));
-        }
+        ImageView ivPicture = getView().findViewById(R.id.picture);
+//        if (ivPicture.hashCode()) {
+//            report.setUri(Image.Plane(etPicture.getText().toString()));
+//        }
 
         EditText etRemarks = getView().findViewById(R.id.remarks);
         if (!isEmpty(etRemarks)) {
