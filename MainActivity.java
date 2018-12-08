@@ -1,7 +1,9 @@
 package dk.ikas.lcd.examproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -9,13 +11,18 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = "MainActivity";
-    public final Integer AuthenticationActivity = 1;
-    public final Integer ReportActivity = 2;
-    public final Integer ListActivity = 3;
+    private final static String TAG = "MainActivity";
+    private final static Integer AuthenticationActivity = 1;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
 
     @Override
     public void onStart() {
@@ -31,10 +38,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.findItem(R.id.menu_action_main).setVisible(false);
-
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             menu.findItem(R.id.menu_action_create).setVisible(false);
+            menu.findItem(R.id.menu_action_main).setVisible(false);
             menu.findItem(R.id.menu_action_list).setVisible(false);
             menu.findItem(R.id.menu_action_settings).setVisible(false);
         }
@@ -81,10 +87,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == this.AuthenticationActivity) {
-
-            String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            Log.d(TAG, "onActivityResult: " + id);
-
+            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+            if(firebaseUser != null) {
+                String id = firebaseUser.getUid();
+                Log.d(TAG, "onActivityResult: " + id);
+            }
         }
+
     }
 }

@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,12 +31,12 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
 
     final String TAG = "ListActivity";
-
     final long ONE_MEGABYTE = 1024 * 1024;
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -67,8 +67,9 @@ public class ListActivity extends AppCompatActivity {
 
                 if (report.getHasImage()) {
                     if (report.getUri() != null) {
-                        ImageView ivPicture = convertView.findViewById(R.id.picture);
-                        ivPicture.setImageURI(report.getUri());
+                        ImageButton btnImage = convertView.findViewById(R.id.picture);
+                        btnImage.setImageURI(report.getUri());
+                        btnImage.setTag(report.getUuid());
                     }
                 }
 
@@ -77,18 +78,6 @@ public class ListActivity extends AppCompatActivity {
 
                 TextView twTime = convertView.findViewById(R.id.time);
                 twTime.setText(report.getTime());
-
-//                TextView twPlace = convertView.findViewById(R.id.place);
-//                twPlace.setText(report.getPlace());
-//
-//                TextView twWeather = convertView.findViewById(R.id.weather);
-//                twWeather.setText(report.getWeather());
-
-//                TextView twVisibility = convertView.findViewById(R.id.visibility);
-//                twVisibility.setText(report.getVisibility().toString());
-
-//                TextView twTemperature = convertView.findViewById(R.id.temperature);
-//                twTemperature.setText(report.getTemperature().toString());
 
                 TextView twSpecies = convertView.findViewById(R.id.species);
                 twSpecies.setText(report.getSpecies());
@@ -99,16 +88,6 @@ public class ListActivity extends AppCompatActivity {
                 TextView twLength = convertView.findViewById(R.id.length);
                 twLength.setText(report.getLength().toString());
 
-//                TextView twNumber = convertView.findViewById(R.id.number);
-//                twNumber.setText(report.getNumber().toString());
-//
-//                TextView twNotes = convertView.findViewById(R.id.notes);
-//                twNotes.setText(report.getNotes());
-//
-//                TextView twRemarks = convertView.findViewById(R.id.remarks);
-//                twRemarks.setText(report.getRemarks());
-
-                //return super.getView(position, convertView, parent);
                 return convertView;
             }
 
@@ -121,12 +100,9 @@ public class ListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                DataSnapshot ds = dataSnapshot;
-                for (DataSnapshot dsC : ds.getChildren()) {
-
+                for (DataSnapshot dsC : dataSnapshot.getChildren()) {
                     Report report = dsC.getValue(Report.class);
                     reportList.add(report);
-
                 }
                 adapter.notifyDataSetChanged();
 
@@ -135,20 +111,22 @@ public class ListActivity extends AppCompatActivity {
                         try {
 
                             StorageReference pathReference = storageRef.child(report.getUuid());
-                            //https://firebasestorage.googleapis.com/v0/b/snapfish-981d9.appspot.com/o/pike85%2F08b973f6-fe9f-4216-b4b2-e371d2568fc1?alt=media&token=deb66605-b571-4e5d-82a4-1673e20cc9ba
                             localFile = File.createTempFile(report.getUuid(), ".jpg");
                             report.setUri(Uri.parse(localFile.toString()));
                             pathReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+
                                     if (taskSnapshot != null) {
                                         System.out.println("The read succeeded: " + taskSnapshot.getStorage().getName());
                                     }
                                     adapter.notifyDataSetChanged();
+
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
+
                                     Log.e(TAG, "onFailure: ", exception);
                                     // Handle any errors
                                 }
@@ -175,7 +153,7 @@ public class ListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.findItem(R.id.menu_action_list).setVisible(false);
+        menu.findItem(R.id.menu_action_list).setEnabled(false);
         return true;
     }
 
@@ -213,5 +191,17 @@ public class ListActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case (R.id.picture):
+                Intent intent = new Intent(this, ShowReportActivity.class);
+                intent.putExtra("report", v.getTag().toString());
+                startActivity(intent, null);
+                Toast.makeText(this, "Show Report", Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 }

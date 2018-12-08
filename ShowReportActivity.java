@@ -17,35 +17,51 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
-public class ReportActivity extends AppCompatActivity implements View.OnClickListener {
+public class ShowReportActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private final String TAG = "ReportActivity";
+    private final static String TAG = "ShowReportActivity";
     private final Integer PhotoActivity = 1;
 
-    private Report report;
-    private Uri imageUri;
+    private String uuid;
+    private Report report = new Report();
+    private Uri imageUri = null;
+    private File localFile = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_report);
+        setContentView(R.layout.activity_show_report);
 
-        findViewById(R.id.saveReport).setOnClickListener(this);
-        findViewById(R.id.selectPicture).setOnClickListener(this);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null && extras.get("report") != null) {
+            this.uuid = extras.get("report").toString();
+            try {
+                this.localFile = File.createTempFile(this.uuid, ".jpg");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        getReport();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.findItem(R.id.menu_action_create).setEnabled(false);
         return true;
     }
 
@@ -61,21 +77,16 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent, null);
                 Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
                 return true;
-//            case R.id.menu_action_create:
-//                intent = new Intent(this, ReportActivity.class);
-//                startActivity(intent, null);
-//                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
-//                return true;
+            case R.id.menu_action_create:
+                intent = new Intent(this, ReportActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
+                return true;
             case R.id.menu_action_list:
                 intent = new Intent(this, ListActivity.class);
                 startActivity(intent, null);
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
-            case R.id.menu_action_main:
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent, null);
-                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
-                return true;
             case R.id.menu_action_settings:
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
@@ -126,11 +137,51 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    private void getReport() {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("pike85");
+        ref.child(this.uuid).addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() != null) {
+                    report = dataSnapshot.getValue(Report.class);
+                    report.setUri(Uri.parse(localFile.toString()));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println(databaseError.getMessage());
+            }
+
+        });
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference("pike85").child(this.uuid);
+        storageRef.getFile(this.localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                if (taskSnapshot != null) {
+                    System.out.println("The read succeeded: " + taskSnapshot.getStorage().getName());
+                }
+                setReport();
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println("onFailure download image: " + e.getMessage());
+            }
+
+        });
+
+    }
+
     private Boolean createReport() {
 
         try {
-
-            this.report = new Report();
 
             EditText etDate = findViewById(R.id.date);
             if (isEmpty(etDate)) {
@@ -223,7 +274,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             //progressDialog.dismiss();
-                            Toast.makeText(ReportActivity.this, "Image uploaded", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ShowReportActivity.this, "Image uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -231,7 +282,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                         public void onFailure(@NonNull Exception e) {
                             //progressDialog.dismiss();
                             e.printStackTrace();
-                            Toast.makeText(ReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ShowReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
 //                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -261,16 +312,59 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                 try {
 
                     ref.setValue(this.report);
-                    Toast.makeText(ReportActivity.this, "Report uploaded ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShowReportActivity.this, "Report uploaded ", Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(ReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ShowReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             } catch (Exception e) {
                 Log.e(TAG, "createReport: ", e);
             }
         }
+    }
+
+    private void setReport() {
+
+        EditText etDate = findViewById(R.id.date);
+        etDate.setText(this.report.getDate());
+
+        EditText etTime = findViewById(R.id.time);
+        etTime.setText(this.report.getTime());
+
+        EditText etPlace = findViewById(R.id.place);
+        etPlace.setText(this.report.getPlace());
+
+        EditText etWeather = findViewById(R.id.weather);
+        etWeather.setText(this.report.getWeather());
+
+        EditText etVisibility = findViewById(R.id.visibility);
+        etVisibility.setText(this.report.getVisibility().toString());
+
+        EditText etTemperature = findViewById(R.id.temperature);
+        etTemperature.setText(this.report.getTemperature().toString());
+
+        EditText etSpecies = findViewById(R.id.species);
+        etSpecies.setText(this.report.getWeather());
+
+        EditText etWeight = findViewById(R.id.weight);
+        etWeight.setText(this.report.getWeight().toString());
+
+        EditText etLength = findViewById(R.id.length);
+        etLength.setText(this.report.getLength().toString());
+
+        EditText etNumber = findViewById(R.id.number);
+        etNumber.setText(this.report.getNumber().toString());
+
+        EditText etNotes = findViewById(R.id.notes);
+        etNotes.setText(this.report.getNotes());
+
+        EditText etRemarks = findViewById(R.id.remarks);
+        etRemarks.setText(this.report.getRemarks());
+
+        ImageView ivPicture = findViewById(R.id.picture);
+        ivPicture.setImageURI(this.report.getUri());
+
     }
 }

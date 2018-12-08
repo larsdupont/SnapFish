@@ -56,8 +56,12 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.findItem(R.id.menu_action_authenticate).setVisible(false);
-        return true;
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            menu.findItem(R.id.menu_action_authenticate).setVisible(false);
+            menu.findItem(R.id.menu_action_create).setVisible(false);
+            menu.findItem(R.id.menu_action_list).setVisible(false);
+            menu.findItem(R.id.menu_action_settings).setVisible(false);
+        }   return true;
     }
 
     @Override
@@ -95,6 +99,7 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
         }
         return true;
     }
+
     @Override
     public void onStart() {
         super.onStart();
