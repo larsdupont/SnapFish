@@ -1,9 +1,11 @@
 package dk.ikas.lcd.examproject;
 
 import android.content.Intent;
+import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +25,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 import dk.ikas.lcd.settings.Settings;
@@ -32,60 +36,73 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
     private final String TAG = "ReportActivity";
     private final Integer PhotoActivity = 1;
     private final String community = Settings.getInstance().getCommunity();
+    private final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(community);
+    private final StorageReference storageRef = FirebaseStorage.getInstance().getReference(community);
+    private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     private Report report;
     private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
-
         findViewById(R.id.saveReport).setOnClickListener(this);
         findViewById(R.id.selectPicture).setOnClickListener(this);
+
+        Date c = Calendar.getInstance().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+        String formattedDate = df.format(c);
+
+        TextInputEditText vDate = findViewById(R.id.date);
+        vDate.setText(formattedDate.toString());
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.findItem(R.id.menu_action_create).setEnabled(false);
         return true;
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_action_authenticate:
                 intent = new Intent(this, AuthenticationActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
                 return true;
-//            case R.id.menu_action_create:
+            case R.id.menu_action_create:
 //                intent = new Intent(this, ReportActivity.class);
-//                startActivity(intent, null);
-//                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
-//                return true;
+//                startActivity(intent);
+//                Toast.makeText(this, "New Report", Toast.LENGTH_LONG).show();
+                return true;
             case R.id.menu_action_list:
                 intent = new Intent(this, ListActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
             case R.id.menu_action_main:
                 intent = new Intent(this, MainActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_settings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+
     }
 
     @Override
@@ -96,10 +113,15 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                 if (createReport()) {
                     uploadImage();
                     uploadReport();
+
+                    Intent intent = new Intent(this, ListActivity.class);
+                    startActivity(intent);
+
                 }
                 break;
             case (R.id.selectPicture):
-                selectPicture();
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, this.PhotoActivity);
                 break;
         }
     }
@@ -120,13 +142,6 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
-    }
-
-    public void selectPicture() {
-
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, this.PhotoActivity);
-
     }
 
     private Boolean createReport() {
@@ -212,61 +227,50 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private Boolean isEmpty(EditText text) {
+
         return text.getText().toString().trim().length() <= 0;
+
     }
 
     private void uploadImage() {
 
         Uri uri = this.report.getUri();
         if (uri != null) {
-
-            StorageReference ref = FirebaseStorage.getInstance().getReference(community).child(this.report.getUuid());
+            StorageReference ref = storageRef.child(this.report.getUuid());
             ref.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //progressDialog.dismiss();
                             Toast.makeText(ReportActivity.this, "Image uploaded", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            //progressDialog.dismiss();
                             e.printStackTrace();
                             Toast.makeText(ReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-//                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-//                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
-//                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
-//                        }
-//                    });
         }
+
     }
 
     private void uploadReport() {
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
+        if (firebaseUser != null) {
             try {
 
-                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-                DatabaseReference ref = root.child(community).child(this.report.getUuid());
-
+                this.report.setUid(firebaseUser.getUid());
                 this.report.setUri(null);
-                this.report.setUid(uid);
                 this.report.setTimeStamp(System.currentTimeMillis());
-
                 try {
 
-                    ref.setValue(this.report);
+                    DatabaseReference childRef = ref.child(this.report.getUuid());
+                    childRef.setValue(this.report);
                     Toast.makeText(ReportActivity.this, "Report uploaded ", Toast.LENGTH_SHORT).show();
 
                 } catch (Exception e) {
+
                     e.printStackTrace();
                     Toast.makeText(ReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }

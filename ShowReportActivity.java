@@ -35,7 +35,7 @@ import dk.ikas.lcd.settings.Settings;
 
 public class ShowReportActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private final static String TAG = "ShowReportActivity";
+    private final String TAG = "ShowReportActivity";
     private final Integer PhotoActivity = 1;
     private final String community = Settings.getInstance().getCommunity();
 
@@ -46,6 +46,7 @@ public class ShowReportActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_report);
 
@@ -64,46 +65,47 @@ public class ShowReportActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_action_authenticate:
                 intent = new Intent(this, AuthenticationActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_create:
                 intent = new Intent(this, ReportActivity.class);
-                startActivity(intent, null);
-                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
+                startActivity(intent);
+                Toast.makeText(this, "New Report", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_list:
                 intent = new Intent(this, ListActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
             case R.id.menu_action_main:
                 intent = new Intent(this, MainActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
-                break;
+                return true;
             case R.id.menu_action_settings:
                 intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+
     }
 
     @Override

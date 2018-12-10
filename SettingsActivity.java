@@ -17,10 +17,17 @@ import dk.ikas.lcd.settings.Settings;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private final static String TAG = "SettingsActivity";
+    private final String TAG = "SettingsActivity";
+    private final Settings settings = Settings.getInstance();
+
+    EditText etCommunity;
+    RadioButton enMetrics;
+    RadioButton euMetrics;
+    EditText etListSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -36,10 +43,26 @@ public class SettingsActivity extends AppCompatActivity {
 //            }
 //        });
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        this.etCommunity = findViewById(R.id.settings_community);
+        this.etCommunity.setText(settings.getCommunity());
+
+        this.enMetrics = findViewById(R.id.settings_metrics_en);
+        this.euMetrics = findViewById(R.id.settings_metrics_eu);
+        if(settings.getMetric() == Settings.Metrics.ENGLISH){
+            this.enMetrics.isChecked();
+        } else {
+            this.euMetrics.isChecked();
+        }
+
+        this.etListSize = findViewById(R.id.settings_list_size);
+        this.etListSize.setText(settings.getListSize().toString());
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             menu.findItem(R.id.menu_action_create).setVisible(false);
@@ -47,61 +70,59 @@ public class SettingsActivity extends AppCompatActivity {
             menu.findItem(R.id.menu_action_list).setVisible(false);
         }
         return true;
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_action_authenticate:
                 intent = new Intent(this, AuthenticationActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_create:
                 intent = new Intent(this, ReportActivity.class);
-                startActivity(intent, null);
-                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
+                startActivity(intent);
+                Toast.makeText(this, "New Report", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_list:
                 intent = new Intent(this, ListActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
             case R.id.menu_action_main:
                 intent = new Intent(this, MainActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
                 return true;
-//            case R.id.menu_action_settings:
+            case R.id.menu_action_settings:
 //                intent = new Intent(this, SettingsActivity.class);
-//                startActivity(intent, null);
+//                startActivity(intent);
 //                Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
-//                break;
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+
     }
 
     public void onClick(View view) {
 
-        Settings settings = Settings.getInstance();
-
-        EditText etCommunity = findViewById(R.id.settings_community);
-        Editable text = etCommunity.getText();
+        Editable text = this.etCommunity.getText();
         settings.setCommunity(text.toString());
 
-        RadioButton enMetrics = findViewById(R.id.settings_metrics_en);
-        RadioButton euMetrics = findViewById(R.id.settings_metrics_eu);
-        if (enMetrics.isChecked()) {
+        if (this.enMetrics.isChecked()) {
             settings.setMetric(Settings.Metrics.ENGLISH);
-        } else if (euMetrics.isChecked()) {
+        } else if (this.euMetrics.isChecked()) {
             settings.setMetric(Settings.Metrics.CONTINELTAL);
         }
+
+        Integer size = Integer.parseInt(this.etListSize.getText().toString());
+        settings.setListSize(size);
 
         settings.savePreferences();
 

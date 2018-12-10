@@ -2,20 +2,14 @@ package dk.ikas.lcd.examproject;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,66 +29,24 @@ import java.util.ArrayList;
 
 import dk.ikas.lcd.settings.Settings;
 
-public class ListActivity extends AppCompatActivity implements View.OnClickListener {
+public class TileActivity extends AppCompatActivity {
 
-    private final String TAG = "ListActivity";
-    private final long ONE_MEGABYTE = 1024 * 1024;
+    private final String TAG = "TileActivity";
     private final String community = Settings.getInstance().getCommunity();
-    private final Integer size = Settings.getInstance().getListSize();
     private final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(community);
     private final StorageReference storageRef = FirebaseStorage.getInstance().getReference(community);
 
-    private ListView view;
     private ArrayList<Report> reportList = new ArrayList<>();
     private File localFile = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-
-        this.view = findViewById(R.id.list_card_view);
-        final ArrayAdapter<Report> adapter = new ArrayAdapter<Report>(this, R.layout.card_view, reportList) {
-
-            @NonNull
-            @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(this.getContext()).inflate(R.layout.card_view, parent, false);
-                }
-                Report report = getItem(position);
-
-                if (report.getHasImage()) {
-                    if (report.getUri() != null) {
-                        ImageView ivPicture = convertView.findViewById(R.id.picture);
-                        ivPicture.setImageURI(report.getUri());
-                        ivPicture.setTag(report.getUuid());
-                    }
-                }
-
-                TextView twDate = convertView.findViewById(R.id.date);
-                twDate.setText(report.getDate());
-
-                TextView twTime = convertView.findViewById(R.id.time);
-                twTime.setText(report.getTime());
-
-                TextView twSpecies = convertView.findViewById(R.id.species);
-                twSpecies.setText(report.getSpecies());
-
-                TextView twWeight = convertView.findViewById(R.id.weight);
-                twWeight.setText(report.getWeight().toString());
-
-                TextView twLength = convertView.findViewById(R.id.length);
-                twLength.setText(report.getLength().toString());
-
-                return convertView;
-            }
-
-        };
-        this.view.setAdapter(adapter);
+        setContentView(R.layout.activity_tile);
 
         // Attach a listener to read the data at our posts reference
-        ref.orderByChild("timeStamp").limitToLast(size).addValueEventListener(new ValueEventListener() {
+        ref.orderByChild("timeStamp").limitToLast(10).addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -105,7 +57,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                         reportList.add(report);
                     }
                 }
-                adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetChanged();
 
                 for (Report report : reportList) {
                     if (report.getHasImage()) {
@@ -121,7 +73,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                                     if (taskSnapshot != null) {
                                         System.out.println("The read succeeded: " + taskSnapshot.getStorage().getName());
                                     }
-                                    adapter.notifyDataSetChanged();
+                                    FillView();
+                                    //adapter.notifyDataSetChanged();
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
@@ -175,14 +128,14 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "New Report", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_list:
-//                intent = new Intent(this, ListActivity.class);
-//                startActivity(intent);
-//                Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
+                intent = new Intent(this, ListActivity.class);
+                startActivity(intent);
+                Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
             case R.id.menu_action_main:
-                intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
+//                intent = new Intent(this, MainActivity.class);
+//                startActivity(intent);
+//                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_settings:
                 intent = new Intent(this, SettingsActivity.class);
@@ -196,17 +149,50 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    public void onClick(View v) {
+    private void FillView() {
 
-        switch (v.getId()) {
-            case (R.id.picture):
-                Intent intent = new Intent(this, ShowReportActivity.class);
-                intent.putExtra("report", v.getTag().toString());
-                startActivity(intent, null);
-                Toast.makeText(this, "Show Report", Toast.LENGTH_LONG).show();
-                break;
+        for(int idx = 0; idx < this.reportList.size(); idx = idx + 1) {
+            Report report = this.reportList.get(idx);
+            if (report.getUri() != null) {
+
+                int id = 0;
+                switch (idx + 1) {
+                    case 1:
+                        id = R.id.tile_one;
+                        break;
+                    case 2:
+                        id = R.id.tile_two;
+                        break;
+                    case 3:
+                        id = R.id.tile_three;
+                        break;
+                    case 4:
+                        id = R.id.tile_four;
+                        break;
+                    case 5:
+                        id = R.id.tile_five;
+                        break;
+                    case 6:
+                        id = R.id.tile_six;
+                        break;
+                    case 7:
+                        id = R.id.tile_seven;
+                        break;
+                    case 8:
+                        id = R.id.tile_eight;
+                        break;
+                    case 9:
+                        id = R.id.tile_nine;
+                        break;
+                    case 10:
+                        id = R.id.tile_ten;
+                        break;
+
+                }
+                ImageView view = findViewById(id);
+                view.setImageURI(report.getUri());
+
+            }
         }
-
     }
 }

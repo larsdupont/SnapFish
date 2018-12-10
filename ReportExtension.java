@@ -7,7 +7,7 @@ public class ReportExtension {
     private String uid;
     private Long timeStamp;
     private final String uuid = UUID.randomUUID().toString();
-    private Boolean hasImage;
+    private Boolean hasImage = false;
 
     public String getUid() {
         return uid;

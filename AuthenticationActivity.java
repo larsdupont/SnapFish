@@ -22,6 +22,8 @@ import com.google.firebase.auth.FirebaseUser;
 public class AuthenticationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "Authentication";
+    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final FirebaseUser user = auth.getCurrentUser();
 
     private TextView mStatusTextView;
     private TextView mDetailTextView;
@@ -31,10 +33,9 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     private String email;
     private String password;
 
-    private FirebaseAuth mAuth;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authetication);
 
@@ -50,64 +51,67 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
         findViewById(R.id.signOutButton).setOnClickListener(this);
         findViewById(R.id.verifyEmailButton).setOnClickListener(this);
 
-        mAuth = FirebaseAuth.getInstance();
+        SetTest();
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             menu.findItem(R.id.menu_action_authenticate).setVisible(false);
             menu.findItem(R.id.menu_action_create).setVisible(false);
             menu.findItem(R.id.menu_action_list).setVisible(false);
             menu.findItem(R.id.menu_action_settings).setVisible(false);
-        }   return true;
+        }
+        return true;
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         Intent intent;
         switch (item.getItemId()) {
-//            case R.id.menu_action_authenticate:
+            case R.id.menu_action_authenticate:
 //                intent = new Intent(this, AuthenticationActivity.class);
-//                startActivity(intent, null);
+//                startActivity(intent);
 //                Toast.makeText(this, "Authenticate", Toast.LENGTH_LONG).show();
-//                return true;
+                return true;
             case R.id.menu_action_create:
                 intent = new Intent(this, ReportActivity.class);
-                startActivity(intent, null);
-                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
+                startActivity(intent);
+                Toast.makeText(this, "New Report", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_list:
                 intent = new Intent(this, ListActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
             case R.id.menu_action_main:
                 intent = new Intent(this, MainActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_settings:
                 intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent, null);
+                startActivity(intent);
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+
     }
 
     @Override
     public void onStart() {
+
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+        updateUI();
+
     }
 
     @Override
@@ -130,7 +134,9 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
 
     @Override
     public void onStop() {
+
         super.onStop();
+
     }
 
     private void signUp() {
@@ -140,19 +146,18 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
             return;
         }
 
-        mAuth.createUserWithEmailAndPassword(email, password)
+        auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            updateUI();
                             finishUp();
                         } else {
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
                             Toast.makeText(AuthenticationActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                            updateUI();
                         }
                     }
                 });
@@ -166,20 +171,19 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
             return;
         }
 
-        mAuth.signInWithEmailAndPassword(email, password)
+        auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
 
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            updateUI();
                             finishUp();
                         } else {
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(AuthenticationActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+                            updateUI();
                         }
 
                         if (!task.isSuccessful()) {
@@ -191,26 +195,19 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
 
     private void signOut() {
 
-        this.mAuth.signOut();
-        updateUI(null);
+        auth.signOut();
+        updateUI();
 
     }
 
     private void sendEmailVerification() {
 
-        // Disable button
         findViewById(R.id.verifyEmailButton).setEnabled(false);
-
-        // Send verification email
-        // [START send_email_verification]
-        final FirebaseUser user = mAuth.getCurrentUser();
         user.sendEmailVerification()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
 
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        // [START_EXCLUDE]
-                        // Re-enable button
                         findViewById(R.id.verifyEmailButton).setEnabled(true);
                         if (task.isSuccessful()) {
                             Toast.makeText(AuthenticationActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
@@ -219,15 +216,13 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
                             Log.e(TAG, "sendEmailVerification", task.getException());
                             Toast.makeText(AuthenticationActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
                         }
-                        // [END_EXCLUDE]
                     }
                 });
-        // [END send_email_verification]
+
     }
 
     private boolean validateForm() {
 
-        SetTest();
         boolean valid = true;
 
         String email = this.mEmailField.getText().toString();
@@ -247,10 +242,12 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
         }
 
         return valid;
+
     }
 
-    private void updateUI(FirebaseUser user) {
-        //hideProgressDialog();
+    private void updateUI() {
+
+        FirebaseUser user = auth.getCurrentUser();
         if (user != null) {
             mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, user.getEmail(), user.isEmailVerified()));
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
@@ -275,8 +272,8 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
         this.email = "lars.dupont@youmail.dk";
         this.password = "Mathi@s99";
 
-        this.mEmailField.setText(email);
-        this.mPasswordField.setText(password);
+        this.mEmailField.setText(this.email);
+        this.mPasswordField.setText(this.password);
 
     }
 
