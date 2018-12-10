@@ -31,10 +31,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+import dk.ikas.lcd.settings.Settings;
+
 public class ShowReportActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final static String TAG = "ShowReportActivity";
     private final Integer PhotoActivity = 1;
+    private final String community = Settings.getInstance().getCommunity();
 
     private String uuid;
     private Report report = new Report();
@@ -87,7 +90,14 @@ public class ShowReportActivity extends AppCompatActivity implements View.OnClic
                 startActivity(intent, null);
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
+            case R.id.menu_action_main:
+                intent = new Intent(this, MainActivity.class);
+                startActivity(intent, null);
+                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
+                break;
             case R.id.menu_action_settings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent, null);
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
             default:
@@ -139,7 +149,7 @@ public class ShowReportActivity extends AppCompatActivity implements View.OnClic
 
     private void getReport() {
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("pike85");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(community);
         ref.child(this.uuid).addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -157,7 +167,7 @@ public class ShowReportActivity extends AppCompatActivity implements View.OnClic
 
         });
 
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference("pike85").child(this.uuid);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference(community).child(this.uuid);
         storageRef.getFile(this.localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
 
             @Override
@@ -268,7 +278,7 @@ public class ShowReportActivity extends AppCompatActivity implements View.OnClic
         Uri uri = this.report.getUri();
         if (uri != null) {
 
-            StorageReference ref = FirebaseStorage.getInstance().getReference("pike85").child(this.report.getUuid());
+            StorageReference ref = FirebaseStorage.getInstance().getReference(community).child(this.report.getUuid());
             ref.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -303,7 +313,7 @@ public class ShowReportActivity extends AppCompatActivity implements View.OnClic
 
                 String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-                DatabaseReference ref = root.child("pike85").child(this.report.getUuid());
+                DatabaseReference ref = root.child(community).child(this.report.getUuid());
 
                 this.report.setUri(null);
                 this.report.setUid(uid);

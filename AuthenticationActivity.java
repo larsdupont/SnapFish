@@ -92,6 +92,8 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
                 Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_settings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent, null);
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
             default:

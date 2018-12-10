@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,20 +35,21 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ListActivity extends AppCompatActivity implements View.OnClickListener, Serializable {
+import dk.ikas.lcd.settings.Settings;
 
-    final String TAG = "ListActivity";
-    final long ONE_MEGABYTE = 1024 * 1024;
+public class ListActivity extends AppCompatActivity implements View.OnClickListener {
 
-    final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    final DatabaseReference ref = database.getReference("pike85");
+    private final String TAG = "ListActivity";
+    private final long ONE_MEGABYTE = 1024 * 1024;
+    private final String community = Settings.getInstance().getCommunity();
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private final DatabaseReference ref = database.getReference(community);
+    private final FirebaseStorage storage = FirebaseStorage.getInstance();
+    private final StorageReference storageRef = storage.getReference(community);
 
-    final FirebaseStorage storage = FirebaseStorage.getInstance();
-    final StorageReference storageRef = storage.getReference("pike85");
-
-    ListView view;
-    ArrayList<Report> reportList = new ArrayList<>();
-    File localFile = null;
+    private ListView view;
+    private ArrayList<Report> reportList = new ArrayList<>();
+    private File localFile = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +69,9 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (report.getHasImage()) {
                     if (report.getUri() != null) {
-                        ImageButton btnImage = convertView.findViewById(R.id.picture);
-                        btnImage.setImageURI(report.getUri());
-                        btnImage.setTag(report.getUuid());
+                        ImageView ivPicture = convertView.findViewById(R.id.picture);
+                        ivPicture.setImageURI(report.getUri());
+                        ivPicture.setTag(report.getUuid());
                     }
                 }
 
@@ -172,7 +174,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menu_action_create:
                 intent = new Intent(this, ReportActivity.class);
                 startActivity(intent, null);
-                Toast.makeText(this, "Create Report", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "New Report", Toast.LENGTH_LONG).show();
                 return true;
 //            case R.id.menu_action_list:
 //                intent = new Intent(this, ListActivity.class);
@@ -185,6 +187,8 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.menu_action_settings:
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent, null);
                 Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
                 break;
             default:
@@ -195,6 +199,7 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case (R.id.picture):
                 Intent intent = new Intent(this, ShowReportActivity.class);
@@ -203,5 +208,6 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Show Report", Toast.LENGTH_LONG).show();
                 break;
         }
+
     }
 }

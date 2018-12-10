@@ -25,10 +25,13 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.Objects;
 
+import dk.ikas.lcd.settings.Settings;
+
 public class ReportActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = "ReportActivity";
     private final Integer PhotoActivity = 1;
+    private final String community = Settings.getInstance().getCommunity();
 
     private Report report;
     private Uri imageUri;
@@ -217,7 +220,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         Uri uri = this.report.getUri();
         if (uri != null) {
 
-            StorageReference ref = FirebaseStorage.getInstance().getReference("pike85").child(this.report.getUuid());
+            StorageReference ref = FirebaseStorage.getInstance().getReference(community).child(this.report.getUuid());
             ref.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -252,7 +255,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
                 String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                 DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-                DatabaseReference ref = root.child("pike85").child(this.report.getUuid());
+                DatabaseReference ref = root.child(community).child(this.report.getUuid());
 
                 this.report.setUri(null);
                 this.report.setUid(uid);
