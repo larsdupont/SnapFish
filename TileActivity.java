@@ -96,69 +96,71 @@ public class TileActivity extends AppCompatActivity implements FirebaseControlle
 
     private void fillView() {
 
-        for (int idx = 0; idx < this.reportList.size(); idx = idx + 1) {
-            Report report = this.reportList.get(idx);
-            if (report.getUri() != null) {
+        for (Integer idx = 0; idx < this.reportList.size(); idx++) {
 
-                int id = 0;
-                switch (idx + 1) {
-                    case 1:
-                        id = R.id.tile_one;
-                        break;
-                    case 2:
-                        id = R.id.tile_two;
-                        break;
-                    case 3:
-                        id = R.id.tile_three;
-                        break;
-                    case 4:
-                        id = R.id.tile_four;
-                        break;
-                    case 5:
-                        id = R.id.tile_five;
-                        break;
-                    case 6:
-                        id = R.id.tile_six;
-                        break;
-                    case 7:
-                        id = R.id.tile_seven;
-                        break;
-                    case 8:
-                        id = R.id.tile_eight;
-                        break;
-                    case 9:
-                        id = R.id.tile_nine;
-                        break;
-                    case 10:
-                        id = R.id.tile_ten;
-                        break;
-
-                }
-                ImageView view = findViewById(id);
-                if(view != null) {
-                    view.setTag(report.getUuid());
-                    view.setImageURI(report.getUri());
-                }
-
+            int tile = 0;
+            switch (idx + 1) {
+                case 1:
+                    tile = R.id.tile_one;
+                    break;
+                case 2:
+                    tile = R.id.tile_two;
+                    break;
+                case 3:
+                    tile = R.id.tile_three;
+                    break;
+                case 4:
+                    tile = R.id.tile_four;
+                    break;
+                case 5:
+                    tile = R.id.tile_five;
+                    break;
+                case 6:
+                    tile = R.id.tile_six;
+                    break;
+                case 7:
+                    tile = R.id.tile_seven;
+                    break;
+                case 8:
+                    tile = R.id.tile_eight;
+                    break;
+                case 9:
+                    tile = R.id.tile_nine;
+                    break;
+                case 10:
+                    tile = R.id.tile_ten;
+                    break;
             }
+
+            if (this.reportList.get(idx) != null && this.reportList.get(idx).getUri() != null) {
+                ImageView view = findViewById(tile);
+                view.setTag(this.reportList.get(idx).getUuid());
+                view.setImageURI(this.reportList.get(idx).getUri());
+            }
+
         }
     }
 
-    private void updateView(Report report){
+    private void updateView(Report report) {
 
-        LinearLayout mainView = findViewById(R.id.tile_layout_main);
-        for(Integer idx = 0; idx < mainView.getChildCount(); idx = idx + 1){
+        LinearLayout leftSideView = findViewById(R.id.tile_left_side);
+        for (Integer idx = 0; idx < leftSideView.getChildCount(); idx = idx + 1) {
 
-            LinearLayout middleView = (LinearLayout) mainView.getChildAt(idx);
-            for (Integer jdx = 0; jdx < middleView.getChildCount(); jdx = jdx + 1){
+            ImageView view = (ImageView) leftSideView.getChildAt(idx);
+            if (view.getTag() == report.getUuid()) {
+                view.setImageURI(report.getUri());
+                return;
+            }
 
-                ImageView imageView = (ImageView) middleView.getChildAt(jdx);
-                if(imageView.getTag() == report.getUuid())
-                {
-                    imageView.setImageURI(report.getUri());
-                    return;
-                }
+        }
 
+        LinearLayout rightSideView = findViewById(R.id.tile_right_side);
+        for (Integer idx = 0; idx < rightSideView.getChildCount(); idx = idx + 1) {
+
+            ImageView view = (ImageView) rightSideView.getChildAt(idx);
+            if (view.getTag() == report.getUuid()) {
+                view.setImageURI(report.getUri());
+                return;
             }
 
         }
