@@ -61,7 +61,7 @@ public class FirebaseController {
 
     public void GetImage(final Report report) {
 
-        if (firebaseUser != null) {
+        if (firebaseUser == null) {
             return;
         }
 
@@ -102,7 +102,7 @@ public class FirebaseController {
 
     public void SetImage(final Report report) {
 
-        if (firebaseUser != null) {
+        if (firebaseUser == null) {
             return;
         }
 
@@ -136,7 +136,7 @@ public class FirebaseController {
 
     public void GetReports(Integer size) {
 
-        if (firebaseUser != null) {
+        if (firebaseUser == null) {
             return;
         }
 
@@ -172,7 +172,7 @@ public class FirebaseController {
 
     public void SetReport(final Report report) {
 
-        if (firebaseUser != null) {
+        if (firebaseUser == null) {
             return;
         }
 
