@@ -197,7 +197,8 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     private void signOut() {
 
         auth.signOut();
-        updateUI();
+        Intent intent = new Intent(this, AuthenticationActivity.class);
+        startActivity(intent);
 
     }
 
