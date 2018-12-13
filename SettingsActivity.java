@@ -64,11 +64,6 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            menu.findItem(R.id.menu_action_create).setVisible(false);
-            menu.findItem(R.id.menu_action_main).setVisible(false);
-            menu.findItem(R.id.menu_action_list).setVisible(false);
-        }
         return true;
 
     }
