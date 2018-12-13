@@ -23,7 +23,7 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
 
     private static final String TAG = "Authentication";
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
-    private final FirebaseUser user = auth.getCurrentUser();
+    private final FirebaseUser firebaseUser = auth.getCurrentUser();
 
     private TextView mStatusTextView;
     private TextView mDetailTextView;
@@ -59,7 +59,7 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+        if (firebaseUser == null) {
             menu.findItem(R.id.menu_action_authenticate).setVisible(false);
             menu.findItem(R.id.menu_action_create).setVisible(false);
             menu.findItem(R.id.menu_action_list).setVisible(false);
@@ -203,14 +203,14 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     private void sendEmailVerification() {
 
         findViewById(R.id.verifyEmailButton).setEnabled(false);
-        user.sendEmailVerification()
+        firebaseUser.sendEmailVerification()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
 
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         findViewById(R.id.verifyEmailButton).setEnabled(true);
                         if (task.isSuccessful()) {
-                            Toast.makeText(AuthenticationActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AuthenticationActivity.this, "Verification email sent to " + firebaseUser.getEmail(), Toast.LENGTH_SHORT).show();
                             finishUp();
                         } else {
                             Log.e(TAG, "sendEmailVerification", task.getException());

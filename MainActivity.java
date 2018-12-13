@@ -10,13 +10,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import dk.ikas.lcd.settings.Settings;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
-    private final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     private Settings settings;
 
@@ -42,8 +43,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         settings = Settings.getInstance(this);
 
-        Intent intent = new Intent(this, TileActivity.class);
-        startActivity(intent);
+        if (this.firebaseUser == null) {
+            Intent intent = new Intent(this, AuthenticationActivity.class);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(this, TileActivity.class);
+            startActivity(intent);
+        }
 
     }
 
@@ -51,13 +57,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if (auth.getCurrentUser() == null) {
-            menu.findItem(R.id.menu_action_create).setVisible(false);
-            menu.findItem(R.id.menu_action_main).setVisible(false);
-            menu.findItem(R.id.menu_action_list).setVisible(false);
-            menu.findItem(R.id.menu_action_settings).setVisible(false);
-        }
         return true;
+
     }
 
     @Override
