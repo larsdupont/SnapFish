@@ -63,6 +63,7 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
             menu.findItem(R.id.menu_action_authenticate).setVisible(false);
             menu.findItem(R.id.menu_action_create).setVisible(false);
             menu.findItem(R.id.menu_action_list).setVisible(false);
+            menu.findItem(R.id.menu_action_main).setVisible(false);
             menu.findItem(R.id.menu_action_settings).setVisible(false);
         }
         return true;
@@ -280,8 +281,8 @@ public class AuthenticationActivity extends AppCompatActivity implements View.On
     private void finishUp() {
 
         try {
-            Intent output = new Intent();
-            setResult(RESULT_OK, output);
+            Intent intent = new Intent(this, TileActivity.class);
+            startActivity(intent);
             finish();
         } catch (Exception e) {
             Log.e(TAG, "finishUp: ", e);
