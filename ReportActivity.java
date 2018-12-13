@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,7 +27,6 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
     private final String TAG = "ReportActivity";
     private final Integer PhotoActivity = 1;
     private final FirebaseController ctrl = new FirebaseController();
-    private Report report;
     private Uri imageUri;
 
     @Override
@@ -98,9 +99,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (v.getId()) {
             case (R.id.saveReport):
-                if (createReport()) {
-                    this.ctrl.SetImage(this.report);
-                }
+                this.ctrl.SetImage(createReport());
                 break;
             case (R.id.selectPicture):
                 Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -145,92 +144,45 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private Boolean createReport() {
+    private Report createReport() {
+
+        EditText etDate = findViewById(R.id.date);
+        EditText etTime = findViewById(R.id.time);
+        EditText etPlace = findViewById(R.id.place);
+        EditText etWeather = findViewById(R.id.weather);
+        EditText etVisibility = findViewById(R.id.visibility);
+        EditText etTemperature = findViewById(R.id.temperature);
+        EditText etSpecies = findViewById(R.id.species);
+        EditText etWeight = findViewById(R.id.weight);
+        EditText etLength = findViewById(R.id.length);
+        EditText etNumber = findViewById(R.id.number);
+        EditText etNotes = findViewById(R.id.notes);
+        EditText etRemarks = findViewById(R.id.remarks);
 
         try {
 
-            this.report = new Report();
-
-            EditText etDate = findViewById(R.id.date);
-            if (isEmpty(etDate)) {
-                etDate.setHint("@string/mandatory_field");
-                etDate.setFocusable(true);
-            } else {
-                this.report.setDate(etDate.getText().toString());
-            }
-
-            EditText etLength = findViewById(R.id.length);
-            if (!isEmpty(etLength)) {
-                this.report.setLength(Double.parseDouble(etLength.getText().toString()));
-            }
-
-            EditText etNotes = findViewById(R.id.notes);
-            if (!isEmpty(etNotes)) {
-                this.report.setNotes(etNotes.getText().toString());
-            }
-
-            EditText etNumber = findViewById(R.id.number);
-            if (!isEmpty(etNumber)) {
-                this.report.setNumber(Integer.parseInt(etNumber.getText().toString()));
-            }
-
-            EditText etPlace = findViewById(R.id.place);
-            if (!isEmpty(etPlace)) {
-                this.report.setPlace(etPlace.getText().toString());
-            }
-
-            if (this.imageUri != null) {
-                this.report.setUri(this.imageUri);
-                this.report.setImage(this.imageUri.getPath());
-                this.report.setHasImage(true);
-            }
-
-            EditText etRemarks = findViewById(R.id.remarks);
-            if (!isEmpty(etRemarks)) {
-                this.report.setRemarks(etRemarks.getText().toString());
-            }
-
-            EditText etSpecies = findViewById(R.id.species);
-            if (!isEmpty(etSpecies)) {
-                this.report.setSpecies(etSpecies.getText().toString());
-            }
-
-            EditText etTemperature = findViewById(R.id.temperature);
-            if (!isEmpty(etTemperature)) {
-                this.report.setTemperature(Double.parseDouble(etTemperature.getText().toString()));
-            }
-
-            EditText etTime = findViewById(R.id.time);
-            if (!isEmpty(etTime)) {
-                this.report.setTime(etTime.getText().toString());
-            }
-
-            EditText etVisibility = findViewById(R.id.visibility);
-            if (!isEmpty(etVisibility)) {
-                this.report.setVisibility(Double.parseDouble(etVisibility.getText().toString()));
-            }
-
-            EditText etWeather = findViewById(R.id.weather);
-            if (!isEmpty(etWeather)) {
-                this.report.setWeather(etWeather.getText().toString());
-            }
-
-            EditText etWeight = findViewById(R.id.weight);
-            if (!isEmpty(etWeight)) {
-                this.report.setWeight(Double.parseDouble(etWeight.getText().toString()));
-            }
-            return true;
+            return new Report(
+                    etDate.getText().toString(),
+                    etTime.getText().toString(),
+                    etPlace.getText().toString(),
+                    etWeather.getText().toString(),
+                    etVisibility.getText().toString(),
+                    etTemperature.getText().toString(),
+                    etSpecies.getText().toString(),
+                    etWeight.getText().toString(),
+                    etLength.getText().toString(),
+                    etNumber.getText().toString(),
+                    etNotes.getText().toString(),
+                    etRemarks.getText().toString(),
+                    this.imageUri,
+                    this.imageUri.getPath(),
+                    FirebaseAuth.getInstance().getUid().toString()
+            );
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            return false;
+            return new Report();
         }
-    }
-
-    private Boolean isEmpty(EditText text) {
-
-        return text.getText().toString().trim().length() <= 0;
-
     }
 
 }
