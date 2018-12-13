@@ -1,7 +1,6 @@
 package dk.ikas.lcd.examproject;
 
 import android.content.Intent;
-import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -40,9 +39,8 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.saveReport).setOnClickListener(this);
         findViewById(R.id.selectPicture).setOnClickListener(this);
 
-        Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-        String formattedDate = df.format(c);
+        String formattedDate = df.format(new Date());
 
         TextInputEditText vDate = findViewById(R.id.date);
         vDate.setText(formattedDate.toString());
