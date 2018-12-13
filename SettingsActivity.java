@@ -94,7 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
                 Toast.makeText(this, "List Reports", Toast.LENGTH_LONG).show();
                 break;
             case R.id.menu_action_main:
-                intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, TileActivity.class);
                 startActivity(intent);
                 Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
                 return true;
