@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,31 +14,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 
-import dk.ikas.lcd.settings.Settings;
+import dk.ikas.lcd.report.Report;
 
-public class ReportActivity extends AppCompatActivity implements View.OnClickListener {
+public class ReportActivity extends AppCompatActivity implements View.OnClickListener, FirebaseController.FireBaseControllerListener {
 
     private final String TAG = "ReportActivity";
     private final Integer PhotoActivity = 1;
-    private final String community = Settings.getInstance().getCommunity();
-    private final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(community);
-    private final StorageReference storageRef = FirebaseStorage.getInstance().getReference(community);
-    private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
+    private final FirebaseController ctrl = new FirebaseController();
     private Report report;
     private Uri imageUri;
 
@@ -48,6 +33,9 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+
+        this.ctrl.setListener(this);
+
         findViewById(R.id.saveReport).setOnClickListener(this);
         findViewById(R.id.selectPicture).setOnClickListener(this);
 
@@ -111,12 +99,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case (R.id.saveReport):
                 if (createReport()) {
-                    uploadImage();
-                    uploadReport();
-
-                    Intent intent = new Intent(this, ListActivity.class);
-                    startActivity(intent);
-
+                    this.ctrl.SetImage(this.report);
                 }
                 break;
             case (R.id.selectPicture):
@@ -142,6 +125,24 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         }
+    }
+
+    @Override
+    public void onDataChange(Report data) {
+        return;
+    }
+
+    @Override
+    public void onDataLoaded(ArrayList<Report> data) {
+        return;
+    }
+
+    @Override
+    public void onDataSaved(Report data) {
+
+        Intent intent = new Intent(this, ListActivity.class);
+        startActivity(intent);
+
     }
 
     private Boolean createReport() {
@@ -232,52 +233,4 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void uploadImage() {
-
-        Uri uri = this.report.getUri();
-        if (uri != null) {
-            StorageReference ref = storageRef.child(this.report.getUuid());
-            ref.putFile(uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(ReportActivity.this, "Image uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(ReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-
-    }
-
-    private void uploadReport() {
-
-        if (firebaseUser != null) {
-            try {
-
-                this.report.setUid(firebaseUser.getUid());
-                this.report.setUri(null);
-                this.report.setTimeStamp(System.currentTimeMillis());
-                try {
-
-                    DatabaseReference childRef = ref.child(this.report.getUuid());
-                    childRef.setValue(this.report);
-                    Toast.makeText(ReportActivity.this, "Report uploaded ", Toast.LENGTH_SHORT).show();
-
-                } catch (Exception e) {
-
-                    e.printStackTrace();
-                    Toast.makeText(ReportActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (Exception e) {
-                Log.e(TAG, "createReport: ", e);
-            }
-        }
-    }
 }

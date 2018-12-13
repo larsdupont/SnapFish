@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
+import dk.ikas.lcd.report.Report;
 import dk.ikas.lcd.settings.Settings;
 
 public class ShowReportActivity extends AppCompatActivity implements View.OnClickListener {

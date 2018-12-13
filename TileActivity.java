@@ -1,43 +1,23 @@
 package dk.ikas.lcd.examproject;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import dk.ikas.lcd.settings.Settings;
+import dk.ikas.lcd.report.Report;
 
-public class TileActivity extends AppCompatActivity {
+public class TileActivity extends AppCompatActivity implements FirebaseController.FireBaseControllerListener {
 
     private final String TAG = "TileActivity";
-    private final String community = Settings.getInstance().getCommunity();
-    private final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(community);
-    private final StorageReference storageRef = FirebaseStorage.getInstance().getReference(community);
-
-    private ArrayList<Report> reportList = new ArrayList<>();
-    private File localFile = null;
+    private final FirebaseController ctrl = new FirebaseController();
+    private ArrayList<Report> reportList = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,63 +25,8 @@ public class TileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tile);
 
-        // Attach a listener to read the data at our posts reference
-        ref.orderByChild("timeStamp").limitToLast(10).addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                for (DataSnapshot dsC : dataSnapshot.getChildren()) {
-                    Report report = dsC.getValue(Report.class);
-                    if (report != null) {
-                        reportList.add(report);
-                    }
-                }
-                //adapter.notifyDataSetChanged();
-
-                for (Report report : reportList) {
-                    if (report.getHasImage()) {
-                        try {
-
-                            StorageReference pathReference = storageRef.child(report.getUuid());
-                            localFile = File.createTempFile(report.getUuid(), ".jpg");
-                            report.setUri(Uri.parse(localFile.toString()));
-                            pathReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-
-                                    if (taskSnapshot != null) {
-                                        System.out.println("The read succeeded: " + taskSnapshot.getStorage().getName());
-                                    }
-                                    FillView();
-                                    //adapter.notifyDataSetChanged();
-
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-
-                                    Log.e(TAG, "onFailure: ", exception);
-
-                                }
-                            });
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                System.out.println("The read failed: " + databaseError.getCode());
-                Log.w(TAG, "onCancelled: ", databaseError.toException());
-
-            }
-
-        });
-
+        ctrl.setListener(this);
+        ctrl.GetReports(10);
     }
 
     @Override
@@ -149,9 +74,29 @@ public class TileActivity extends AppCompatActivity {
 
     }
 
-    private void FillView() {
+    @Override
+    public void onDataChange(Report data) {
 
-        for(int idx = 0; idx < this.reportList.size(); idx = idx + 1) {
+        updateView(data);
+
+    }
+
+    @Override
+    public void onDataLoaded(ArrayList<Report> data) {
+
+        this.reportList = data;
+        fillView();
+
+    }
+
+    @Override
+    public void onDataSaved(Report data) {
+        return;
+    }
+
+    private void fillView() {
+
+        for (int idx = 0; idx < this.reportList.size(); idx = idx + 1) {
             Report report = this.reportList.get(idx);
             if (report.getUri() != null) {
 
@@ -190,9 +135,31 @@ public class TileActivity extends AppCompatActivity {
 
                 }
                 ImageView view = findViewById(id);
+                view.setTag(report.getUuid());
                 view.setImageURI(report.getUri());
 
             }
         }
+    }
+
+    private void updateView(Report report){
+
+        LinearLayout mainView = findViewById(R.id.tile_layout_main);
+        for(Integer idx = 0; idx < mainView.getChildCount(); idx = idx + 1){
+
+            LinearLayout middleView = (LinearLayout) mainView.getChildAt(idx);
+            for (Integer jdx = 0; jdx < middleView.getChildCount(); jdx = jdx + 1){
+
+                ImageView imageView = (ImageView) middleView.getChildAt(jdx);
+                if(imageView.getTag() == report.getUuid())
+                {
+                    imageView.setImageURI(report.getUri());
+                    return;
+                }
+
+            }
+
+        }
+
     }
 }
