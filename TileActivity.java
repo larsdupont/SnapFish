@@ -135,8 +135,10 @@ public class TileActivity extends AppCompatActivity implements FirebaseControlle
 
                 }
                 ImageView view = findViewById(id);
-                view.setTag(report.getUuid());
-                view.setImageURI(report.getUri());
+                if(view != null) {
+                    view.setTag(report.getUuid());
+                    view.setImageURI(report.getUri());
+                }
 
             }
         }
