@@ -94,6 +94,11 @@ public class TileActivity extends AppCompatActivity implements FirebaseControlle
         return;
     }
 
+    @Override
+    public void onImageSaved(Report data) {
+        return;
+    }
+
     private void fillView() {
 
         for (Integer idx = 0; idx < this.reportList.size(); idx++) {

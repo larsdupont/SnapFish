@@ -129,6 +129,11 @@ public class ListActivity extends AppCompatActivity implements View.OnClickListe
         return;
     }
 
+    @Override
+    public void onImageSaved(Report data) {
+        return;
+    }
+
     private void fillView() {
 
         ArrayAdapter<Report> adapter = new ArrayAdapter<Report>(this, R.layout.card_view, reportList) {

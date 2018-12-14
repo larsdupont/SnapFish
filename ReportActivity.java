@@ -97,7 +97,9 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (v.getId()) {
             case (R.id.saveReport):
-                this.ctrl.SetImage(createReport());
+                Report report = createReport();
+                this.ctrl.SetImage(report);
+                this.ctrl.SetReport(report);
                 break;
             case (R.id.selectPicture):
                 Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -142,6 +144,11 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
+    @Override
+    public void onImageSaved(Report data) {
+        return;
+    }
+
     private Report createReport() {
 
         EditText etDate = findViewById(R.id.date);
@@ -156,6 +163,13 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
         EditText etNumber = findViewById(R.id.number);
         EditText etNotes = findViewById(R.id.notes);
         EditText etRemarks = findViewById(R.id.remarks);
+
+        String path = "";
+        try{
+            path = this.imageUri.getPath().toString();
+        } catch(Exception e){
+            e.printStackTrace();
+        }
 
         try {
 
@@ -173,7 +187,7 @@ public class ReportActivity extends AppCompatActivity implements View.OnClickLis
                     etNotes.getText().toString(),
                     etRemarks.getText().toString(),
                     this.imageUri,
-                    this.imageUri.getPath(),
+                    path,
                     FirebaseAuth.getInstance().getUid().toString()
             );
 

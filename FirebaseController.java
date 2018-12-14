@@ -45,6 +45,8 @@ public class FirebaseController {
 
         public void onDataSaved(Report data);
 
+        public void onImageSaved(Report data);
+
     }
 
     public void setListener(FireBaseControllerListener listener) {
@@ -106,31 +108,31 @@ public class FirebaseController {
             return;
         }
 
-        Uri uri = report.getUri();
-        if (uri != null) {
-
-            storageRef
-                    .child(report.getUuid())
-                    .putFile(uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Log.d(TAG, "Image Upload Success");
-                            SetReport(report);
-                        }
-
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.e(TAG, "Image Upload Failure: " + e.getMessage(), e);
-                        }
-
-                    });
-
+        if (report.getUri() == null) {
+            return;
         }
+
+        storageRef
+                .child(report.getUuid())
+                .putFile(report.getUri())
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Log.d(TAG, "Image Upload Success");
+                        listener.onImageSaved(report);
+                    }
+
+                })
+                .addOnFailureListener(new OnFailureListener() {
+
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Image Upload Failure: " + e.getMessage(), e);
+                    }
+
+                });
+
 
     }
 
@@ -178,7 +180,6 @@ public class FirebaseController {
 
         report.setUid(firebaseUser.getUid());
         report.setUri(null);
-        report.setTimeStamp(System.currentTimeMillis());
         ref
                 .child(report.getUuid())
                 .setValue(report)
