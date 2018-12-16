@@ -119,7 +119,7 @@ public class SettingsActivity extends AppCompatActivity {
         Integer size = Integer.parseInt(this.etListSize.getText().toString());
         settings.setListSize(size);
 
-        settings.savePreferences();
+        settings.savePreferences(this.getBaseContext());
 
     }
 }

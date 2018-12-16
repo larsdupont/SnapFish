@@ -19,8 +19,6 @@ public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
     private final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-    private Settings settings;
-
     @Override
     protected void attachBaseContext(Context base) {
 
@@ -41,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        settings = Settings.getInstance(this);
+        Settings.getInstance(this);
 
         if (this.firebaseUser == null) {
             Intent intent = new Intent(this, AuthenticationActivity.class);
